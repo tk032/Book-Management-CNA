@@ -43,45 +43,32 @@ public class PublishManage {
         RequestApproved requestApproved = new RequestApproved(this);
         requestApproved.publishAfterCommit();
 
-        PublishRequestRegistered publishRequestRegistered = new PublishRequestRegistered(
-            this
-        );
+        PublishRequestRegistered publishRequestRegistered = new PublishRequestRegistered(this);
         publishRequestRegistered.publishAfterCommit();
     }
 
     public static PublishManageRepository repository() {
-        PublishManageRepository publishManageRepository = AuthorManagementApplication.applicationContext.getBean(
-            PublishManageRepository.class
-        );
+        PublishManageRepository publishManageRepository =
+            AuthorManagementApplication.applicationContext.getBean(PublishManageRepository.class);
         return publishManageRepository;
     }
 
     //<<< Clean Arch / Port Method
     public static void approvePublish(BookApproved bookApproved) {
-        //implement business logic here:
+        try {
+            Long id = Long.valueOf(bookApproved.getTargetId());
 
-        /** Example 1:  new item 
-        PublishManage publishManage = new PublishManage();
-        repository().save(publishManage);
+            repository().findById(id).ifPresent(publishManage -> {
+                publishManage.setPublishStatus("승인됨"); // 상태 변경
+                repository().save(publishManage); // 저장
 
-        RequestApproved requestApproved = new RequestApproved(publishManage);
-        requestApproved.publishAfterCommit();
-        */
+                RequestApproved requestApproved = new RequestApproved(publishManage);
+                requestApproved.publishAfterCommit();
+            });
 
-        /** Example 2:  finding and process
-        
-
-        repository().findById(bookApproved.get???()).ifPresent(publishManage->{
-            
-            publishManage // do something
-            repository().save(publishManage);
-
-            RequestApproved requestApproved = new RequestApproved(publishManage);
-            requestApproved.publishAfterCommit();
-
-         });
-        */
-
+        } catch (NumberFormatException e) {
+            System.out.println("Invalid targetId in BookApproved: " + bookApproved.getTargetId());
+        }
     }
     //>>> Clean Arch / Port Method
 
