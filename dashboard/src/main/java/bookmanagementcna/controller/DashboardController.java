@@ -25,7 +25,7 @@ public class DashboardController {
     private final BestsellerListRepository bestsellerListRepository;
     private final SubscriptionListRepository subscriptionListRepository;
 
-    @GetMapping("/books")
+    @GetMapping("/books/{id}")
     public List<BookDto> getBooks() {
         return StreamSupport.stream(bookListRepository.findAll().spliterator(), false)
                 .map(book -> new BookDto(
@@ -52,7 +52,7 @@ public class DashboardController {
                 .collect(Collectors.toList());
     }
 
-    @GetMapping("/subscription/{id}")
+    @GetMapping("/subscriptions/{id}")
     public SubscriptionDto getSubscription(@PathVariable Long id) {
         return subscriptionListRepository.findById(id)
                 .map(sub -> new SubscriptionDto(

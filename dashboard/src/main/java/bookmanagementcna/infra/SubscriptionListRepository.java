@@ -6,8 +6,8 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
 @RepositoryRestResource(
-    collectionResourceRel = "SubscriptionList",
-    path = "SubscriptionList"
+    collectionResourceRel = "subscriptionLists",
+    path = "subscriptionLists"
 )
 public interface SubscriptionListRepository
     extends PagingAndSortingRepository<SubscriptionList, Long> {}
