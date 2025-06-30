@@ -82,6 +82,7 @@ public class Service {
         return serviceRepository;
     }
 
+<<<<<<< HEAD
     //<<< Clean Arch / Port Method
     public static void createAiCoverImage(RequestApproved requestApproved) {
         //implement business logic here:
@@ -188,3 +189,21 @@ public class Service {
 
 }
 //>>> DDD / Aggregate Root
+=======
+    @Entity
+public class Service {
+    @Id
+    private Long id;
+    private String publicationId;
+    private String title;
+    private Boolean isBestSeller;
+    private Boolean isPublishCompleted;
+
+    public void publishRequest(PublishCommand cmd) {
+        this.isPublishCompleted = true;
+        ServicePublished event = new ServicePublished(this);
+        event.publishAfterCommit(); // 1. 이벤트 발행
+    }
+  }
+}
+>>>>>>> 095c5db1600412671eb330388e095fbf60263f0a

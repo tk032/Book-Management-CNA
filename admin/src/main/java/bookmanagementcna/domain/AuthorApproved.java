@@ -30,5 +30,12 @@ public class AuthorApproved extends AbstractEvent {
     public AuthorApproved() {
         super();
     }
+<<<<<<< HEAD
+=======
+
+    public void publishAfterCommit() {
+        System.out.println("AuthorApproved Event published: " + this);
+    }
+>>>>>>> 095c5db1600412671eb330388e095fbf60263f0a
 }
 //>>> DDD / Domain Event

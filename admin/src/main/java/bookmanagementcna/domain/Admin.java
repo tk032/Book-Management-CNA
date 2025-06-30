@@ -31,7 +31,11 @@ public class Admin {
 
     private String requestedAt;
 
+<<<<<<< HEAD
     private String status;      // APPROVED, REJECTED
+=======
+    private String status;      // APPROVED, REJECTED, RESOLVED
+>>>>>>> 095c5db1600412671eb330388e095fbf60263f0a
 
     private Long adminId;
 
@@ -41,17 +45,35 @@ public class Admin {
 
     @PostPersist
     public void onPostPersist() {
+<<<<<<< HEAD
         ReportResolved reportResolved = new ReportResolved(this);
         reportResolved.publishAfterCommit();
 
         BookApproved bookApproved = new BookApproved(this);
         bookApproved.publishAfterCommit();
+=======
+        if ("REPORT".equals(this.requestType)) {
+            ReportResolved reportResolved = new ReportResolved(this);
+            reportResolved.publishAfterCommit();
+        }
+        else if ("BOOK".equals(this.requestType)) {
+            BookApproved bookApproved = new BookApproved(this);
+            bookApproved.publishAfterCommit();
+        }
+>>>>>>> 095c5db1600412671eb330388e095fbf60263f0a
     }
 
     @PostUpdate
     public void onPostUpdate() {
+<<<<<<< HEAD
         AuthorApproved authorApproved = new AuthorApproved(this);
         authorApproved.publishAfterCommit();
+=======
+        if ("AUTHOR".equals(this.requestType)) {
+            AuthorApproved authorApproved = new AuthorApproved(this);
+            authorApproved.publishAfterCommit();
+        }
+>>>>>>> 095c5db1600412671eb330388e095fbf60263f0a
     }
 
     public static AdminRepository repository() {
@@ -62,6 +84,7 @@ public class Admin {
     }
 
     //<<< Clean Arch / Port Method
+<<<<<<< HEAD
     public static void requestRegister(
         RegistrationRequested registrationRequested
     ) {
@@ -85,10 +108,21 @@ public class Admin {
          });
         */
 
+=======
+    public static void requestRegister(RegistrationRequested event) {
+        Admin admin = new Admin();
+        admin.setRequestId(event.getId());
+        admin.setRequestType("AUTHOR");
+        admin.setTargetId(event.getEmail());
+        admin.setStatus("PENDING");
+        admin.setRequestedAt(new Date().toString());
+        repository().save(admin);
+>>>>>>> 095c5db1600412671eb330388e095fbf60263f0a
     }
 
     //>>> Clean Arch / Port Method
     //<<< Clean Arch / Port Method
+<<<<<<< HEAD
     public static void requestRegister(
         PublishRequestRegistered publishRequestRegistered
     ) {
@@ -167,3 +201,34 @@ public class Admin {
 
 }
 //>>> DDD / Aggregate Root
+=======
+    public static void requestRegister(PublishRequestRegistered event) {
+       Admin admin = new Admin();
+        admin.setRequestId(event.getId());
+        admin.setRequestType("BOOK");
+        admin.setTargetId(event.getAuthorId());
+        admin.setStatus("PENDING");
+        admin.setRequestedAt(new Date().toString());
+        repository().save(admin);
+    }
+
+    public static void requestResolve(ContentReported event) {
+        Admin admin = new Admin();
+        admin.setRequestId(event.getId());
+        admin.setRequestType("REPORT");
+        admin.setTargetId(event.getReportedContentId());
+        admin.setStatus("PENDING");
+        admin.setRequestedAt(new Date().toString());
+        repository().save(admin);
+    }
+
+    public static void approveLogin(Login login) {
+        System.out.println("Login approved for: " + login.getUserId());
+    }
+
+   public static void approveLogout(Logout logout) {
+        System.out.println("Logout approved for: " + logout.getUserId());
+    }
+
+}
+>>>>>>> 095c5db1600412671eb330388e095fbf60263f0a
