@@ -6,6 +6,12 @@ import java.time.LocalDate;
 import java.util.*;
 import lombok.*;
 
+/**
+ * 로그인 이벤트
+ * 사용자가 로그인할 때 발행되며, 상태 동기화 또는 인증 연동에 사용될 수 있음.
+ */
+
+
 //<<< DDD / Domain Event
 @Data
 @ToString
