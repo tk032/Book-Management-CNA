@@ -12,10 +12,10 @@ import lombok.*;
 public class AuthorApproved extends AbstractEvent {
 
     private Long id;
-    private String requestId;
+    private Long requestId;
     private String requestType;
     private Long targetId;
-    private String requestedAt;
+    private Date requestedAt;
     private String status;
     private Long adminId;
     private Date approvedAt;
@@ -23,8 +23,8 @@ public class AuthorApproved extends AbstractEvent {
 
     public AuthorApproved(Admin aggregate) {
         super(aggregate);
-        this.requestId = aggregate.getRequestId();
-        this.targetId = aggregate.getTargetId();
+        this.requestId = Long.valueOf(aggregate.getRequestId());
+        this.targetId = Long.valueOf(aggregate.getTargetId());
     }
 
     public AuthorApproved() {
