@@ -15,6 +15,7 @@ public class BookDto {
     private String author;
     private String contentSummary;
     private String coverUrl;
-    private Boolean isAvailable;
     private Date publishedDate;
+    private Boolean isAvailable;
+
 }

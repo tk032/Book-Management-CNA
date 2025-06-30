@@ -25,8 +25,8 @@ public class DashboardController {
     private final BestsellerListRepository bestsellerListRepository;
     private final SubscriptionListRepository subscriptionListRepository;
 
-    @GetMapping("/books/{id}")
-    public List<BookDto> getBooks() {
+        @GetMapping("/books")
+        public List<BookDto> getAllBooks() {
         return StreamSupport.stream(bookListRepository.findAll().spliterator(), false)
                 .map(book -> new BookDto(
                         book.getId(),
@@ -34,10 +34,10 @@ public class DashboardController {
                         book.getAuthor(),
                         book.getContentSummary(),
                         book.getCoverUrl(),
-                        book.getIsAvailable(),
-                        book.getPublishedDate()))
+                        book.getPublishedDate(),
+                        book.getIsAvailable()))
                 .collect(Collectors.toList());
-    }
+        }
 
     @GetMapping("/bestsellers")
     public List<BestsellerDto> getBestsellers() {
@@ -52,14 +52,14 @@ public class DashboardController {
                 .collect(Collectors.toList());
     }
 
-    @GetMapping("/subscriptions/{id}")
-    public SubscriptionDto getSubscription(@PathVariable Long id) {
-        return subscriptionListRepository.findById(id)
+        @GetMapping("/subscribers")
+        public List<SubscriptionDto> getAllSubscribers() {
+        return StreamSupport.stream(subscriptionListRepository.findAll().spliterator(), false)
                 .map(sub -> new SubscriptionDto(
                         sub.getId(),
                         sub.getName(),
                         sub.getJoinStatus(),
                         sub.getPoint()))
-                .orElseThrow(() -> new RuntimeException("구독자 정보 없음"));
-    }
+                .collect(Collectors.toList());
+        }
 }
