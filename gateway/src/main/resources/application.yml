@@ -25,17 +25,10 @@ spring:
           uri: http://localhost:8085
           predicates:
             - Path=/admins/**, 
-<<<<<<< HEAD
         - id: dashboard
           uri: http://localhost:8086
           predicates:
             - Path=, /bookLists/**, /subscriptionList/**, /bestsellerLists/**
-=======
-        - id: 대시보드
-          uri: http://localhost:8086
-          predicates:
-            - Path=, /bookLists/**, /구독상태조회/**, /bestsellerLists/**
->>>>>>> 095c5db1600412671eb330388e095fbf60263f0a
         - id: frontend
           uri: http://localhost:8080
           predicates:
@@ -76,13 +69,8 @@ spring:
           uri: http://admin:8080
           predicates:
             - Path=/admins/**, 
-<<<<<<< HEAD
         - id: dashboard
           uri: http://dashboard:8080
-=======
-        - id: 대시보드
-          uri: http://대시보드:8080
->>>>>>> 095c5db1600412671eb330388e095fbf60263f0a
           predicates:
             - Path=, 
         - id: frontend

@@ -31,11 +31,7 @@ public class Admin {
 
     private String requestedAt;
 
-<<<<<<< HEAD
-    private String status;      // APPROVED, REJECTED
-=======
     private String status;      // APPROVED, REJECTED, RESOLVED
->>>>>>> 095c5db1600412671eb330388e095fbf60263f0a
 
     private Long adminId;
 
@@ -45,13 +41,6 @@ public class Admin {
 
     @PostPersist
     public void onPostPersist() {
-<<<<<<< HEAD
-        ReportResolved reportResolved = new ReportResolved(this);
-        reportResolved.publishAfterCommit();
-
-        BookApproved bookApproved = new BookApproved(this);
-        bookApproved.publishAfterCommit();
-=======
         if ("REPORT".equals(this.requestType)) {
             ReportResolved reportResolved = new ReportResolved(this);
             reportResolved.publishAfterCommit();
@@ -60,20 +49,14 @@ public class Admin {
             BookApproved bookApproved = new BookApproved(this);
             bookApproved.publishAfterCommit();
         }
->>>>>>> 095c5db1600412671eb330388e095fbf60263f0a
     }
 
     @PostUpdate
     public void onPostUpdate() {
-<<<<<<< HEAD
-        AuthorApproved authorApproved = new AuthorApproved(this);
-        authorApproved.publishAfterCommit();
-=======
         if ("AUTHOR".equals(this.requestType)) {
             AuthorApproved authorApproved = new AuthorApproved(this);
             authorApproved.publishAfterCommit();
         }
->>>>>>> 095c5db1600412671eb330388e095fbf60263f0a
     }
 
     public static AdminRepository repository() {
@@ -84,31 +67,6 @@ public class Admin {
     }
 
     //<<< Clean Arch / Port Method
-<<<<<<< HEAD
-    public static void requestRegister(
-        RegistrationRequested registrationRequested
-    ) {
-        //implement business logic here:
-
-        /** Example 1:  new item 
-        Admin admin = new Admin();
-        repository().save(admin);
-
-        */
-
-        /** Example 2:  finding and process
-        
-
-        repository().findById(registrationRequested.get???()).ifPresent(admin->{
-            
-            admin // do something
-            repository().save(admin);
-
-
-         });
-        */
-
-=======
     public static void requestRegister(RegistrationRequested event) {
         Admin admin = new Admin();
         admin.setRequestId(event.getId());
@@ -117,91 +75,10 @@ public class Admin {
         admin.setStatus("PENDING");
         admin.setRequestedAt(new Date().toString());
         repository().save(admin);
->>>>>>> 095c5db1600412671eb330388e095fbf60263f0a
     }
 
     //>>> Clean Arch / Port Method
     //<<< Clean Arch / Port Method
-<<<<<<< HEAD
-    public static void requestRegister(
-        PublishRequestRegistered publishRequestRegistered
-    ) {
-        //implement business logic here:
-
-        /** Example 1:  new item 
-        Admin admin = new Admin();
-        repository().save(admin);
-
-        */
-
-        /** Example 2:  finding and process
-        
-
-        repository().findById(publishRequestRegistered.get???()).ifPresent(admin->{
-            
-            admin // do something
-            repository().save(admin);
-
-
-         });
-        */
-
-    }
-
-    //>>> Clean Arch / Port Method
-    //<<< Clean Arch / Port Method
-    public static void approveLogin(Login login) {
-        //implement business logic here:
-
-        /** Example 1:  new item 
-        Admin admin = new Admin();
-        repository().save(admin);
-
-        */
-
-        /** Example 2:  finding and process
-        
-
-        repository().findById(login.get???()).ifPresent(admin->{
-            
-            admin // do something
-            repository().save(admin);
-
-
-         });
-        */
-
-    }
-
-    //>>> Clean Arch / Port Method
-    //<<< Clean Arch / Port Method
-    public static void approveLogout(Logout logout) {
-        //implement business logic here:
-
-        /** Example 1:  new item 
-        Admin admin = new Admin();
-        repository().save(admin);
-
-        */
-
-        /** Example 2:  finding and process
-        
-
-        repository().findById(logout.get???()).ifPresent(admin->{
-            
-            admin // do something
-            repository().save(admin);
-
-
-         });
-        */
-
-    }
-    //>>> Clean Arch / Port Method
-
-}
-//>>> DDD / Aggregate Root
-=======
     public static void requestRegister(PublishRequestRegistered event) {
        Admin admin = new Admin();
         admin.setRequestId(event.getId());
@@ -231,4 +108,3 @@ public class Admin {
     }
 
 }
->>>>>>> 095c5db1600412671eb330388e095fbf60263f0a

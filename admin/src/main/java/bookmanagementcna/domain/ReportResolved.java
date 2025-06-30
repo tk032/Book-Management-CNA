@@ -30,12 +30,9 @@ public class ReportResolved extends AbstractEvent {
     public ReportResolved() {
         super();
     }
-<<<<<<< HEAD
-=======
 
     public void publishAfterCommit() {
         System.out.println("ReportResolved Evenet published: " + this);
     }
->>>>>>> 095c5db1600412671eb330388e095fbf60263f0a
 }
 //>>> DDD / Domain Event

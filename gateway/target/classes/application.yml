@@ -25,10 +25,10 @@ spring:
           uri: http://localhost:8085
           predicates:
             - Path=/admins/**, 
-        - id: 대시보드
+        - id: dashboard
           uri: http://localhost:8086
           predicates:
-            - Path=, /bookLists/**, /구독상태조회/**, /bestsellerLists/**
+            - Path=, /bookLists/**, /subscriptionList/**, /bestsellerLists/**
         - id: frontend
           uri: http://localhost:8080
           predicates:
@@ -69,8 +69,8 @@ spring:
           uri: http://admin:8080
           predicates:
             - Path=/admins/**, 
-        - id: 대시보드
-          uri: http://대시보드:8080
+        - id: dashboard
+          uri: http://dashboard:8080
           predicates:
             - Path=, 
         - id: frontend
