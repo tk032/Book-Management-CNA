@@ -1,18 +1,8 @@
 package bookmanagementcna.domain;
 
 import bookmanagementcna.SubscribersManagementApplication;
-import bookmanagementcna.domain.ContentViewEnabled;
-import bookmanagementcna.domain.Login;
-import bookmanagementcna.domain.Logout;
-import bookmanagementcna.domain.PointsAdded;
-import bookmanagementcna.domain.PointsUsed;
-import bookmanagementcna.domain.SignedIn;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.time.LocalDate;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import javax.persistence.*;
 import lombok.Data;
 
@@ -27,54 +17,107 @@ public class Subscriber {
     private Long id;
 
     private String email;
-
     private String name;
-
     private String message;
-
     private Integer point;
-
     private Boolean joinStatus;
-
     private Boolean ktCustomer;
-    
     private String loginStatus;
+
+    // [추가] 요금제 가입 여부 필드
+    private Boolean unlimitedPlan = false; // 기본값: 미가입 상태
+
+    // [추가] 도메인 이벤트 임시 저장소 (영속성 대상 아님)
+    @Transient
+    private final List<Object> domainEvents = new ArrayList<>();
+
+    // [추가] 도메인 이벤트 등록 메서드
+    public void registerEvent(Object event) {
+        this.domainEvents.add(event);
+    }
+
+    // [추가] 도메인 이벤트 조회 메서드
+    public List<Object> getDomainEvents() {
+        return Collections.unmodifiableList(domainEvents);
+    }
+
+    // [추가] 도메인 이벤트 비우기
+    public void clearEvents() {
+        domainEvents.clear();
+    }
 
     @PostPersist
     public void onPostPersist() {
-        // 회원가입 시점에만 필요한 이벤트만 발행
+        // 회원가입 시점에만 필요한 이벤트만 등록
         SignedIn signedIn = new SignedIn(this);
-        signedIn.publishAfterCommit();
-        
+        registerEvent(signedIn);
+
         this.point = 1000; // 가입 기본 포인트 설정
         PointsAdded pointsAdded = new PointsAdded(this);
-        pointsAdded.publishAfterCommit();
+        registerEvent(pointsAdded);
     }
 
     // 로그인
     public void login() {
         this.loginStatus = "LOGIN";
         Login login = new Login(this);
-        login.publishAfterCommit();
+        registerEvent(login);
     }
 
     // 로그아웃
     public void logout() {
         this.loginStatus = "LOGOUT";
         Logout logout = new Logout(this);
-        logout.publishAfterCommit();
+        registerEvent(logout);
     }
 
-    // 콘텐츠 열람 시 포인트 차감 및 열람 가능 이벤트 발행
-    public void usePointForContent(int amount) {
-        if (this.point != null && this.point >= amount) {
-            this.point -= amount;
-            PointsUsed pointsUsed = new PointsUsed(this);
-            pointsUsed.publishAfterCommit();
+    // 콘텐츠 열람 (요금제 여부 확인 및 포인트 부족 예외처리)
+    public void usePointForContent(int amount) throws InsufficientPointsException {
+        if (Boolean.TRUE.equals(this.unlimitedPlan)) {
+            // 무제한 요금제 가입자는 포인트 차감 없이 바로 열람
             ContentViewEnabled contentViewEnabled = new ContentViewEnabled(this);
-            contentViewEnabled.publishAfterCommit();
+            registerEvent(contentViewEnabled);
+            return;
         }
-        // TODO: 포인트 부족 시 예외 처리 필요
+        if (this.point == null || this.point < amount) {
+            throw new InsufficientPointsException(
+                "포인트가 " + (amount - (this.point != null ? this.point : 0)) + "점 부족해요!"
+            );
+        }
+        this.point -= amount;
+        PointsUsed pointsUsed = new PointsUsed(this);
+        registerEvent(pointsUsed);
+        ContentViewEnabled contentViewEnabled = new ContentViewEnabled(this);
+        registerEvent(contentViewEnabled);
+    }
+
+    // 포인트 충전
+    public void addPoints(int amount) {
+        if (amount <= 0) {
+            throw new IllegalArgumentException("0 이상의 포인트만 충전 가능해요!");
+        }
+        this.point = (this.point == null) ? amount : this.point + amount;
+        PointsAdded pointsAdded = new PointsAdded(this);
+        registerEvent(pointsAdded);
+    }
+
+    // 요금제 가입
+    public void subscribeUnlimitedPlan() {
+        this.unlimitedPlan = true;
+        // TODO: 요금제 가입 이벤트 필요시 registerEvent()로 추가
+    }
+
+    // 요금제 해지
+    public void unsubscribeUnlimitedPlan() {
+        this.unlimitedPlan = false;
+        // TODO: 요금제 해지 이벤트 필요시 registerEvent()로 추가
+    }
+
+    // 포인트 부족 예외 클래스 (내부 정적 클래스)
+    public static class InsufficientPointsException extends Exception {
+        public InsufficientPointsException(String message) {
+            super(message);
+        }
     }
 
     public static SubscriberRepository repository() {
@@ -108,7 +151,6 @@ public class Subscriber {
             subscriber // do something
             repository().save(subscriber);
 
-
          });
         */
 
@@ -137,7 +179,6 @@ public class Subscriber {
             subscriber // do something
             repository().save(subscriber);
 
-
          });
         */
 
@@ -146,4 +187,3 @@ public class Subscriber {
 
 }
 //>>> DDD / Aggregate Root
-
