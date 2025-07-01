@@ -37,7 +37,19 @@ public class SubscriptionListViewHandler {
             e.printStackTrace();
         }
     }
+    
+    @StreamListener(KafkaProcessor.INPUT)
+    public void whenContentViewEnabled_then_UPDATE_1(
+        @Payload ContentViewEnabled contentViewEnabled
+    ) {
+        try {
+            if (!contentViewEnabled.validate()) return;
+            // view 객체 조회
 
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
     
     //>>> DDD / CQRS
 }
