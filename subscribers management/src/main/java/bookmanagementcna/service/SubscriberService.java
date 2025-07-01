@@ -3,6 +3,7 @@ package bookmanagementcna.service;
 import bookmanagementcna.domain.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.stream.function.StreamBridge;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,17 +16,31 @@ public class SubscriberService {
     @Autowired
     private StreamBridge streamBridge;
 
+    @Autowired // 비밀번호 인코더 추가
+    private PasswordEncoder passwordEncoder;
+
     // 회원가입
     @Transactional
     public Subscriber register(Subscriber subscriber) {
         if (subscriberRepository.findByEmail(subscriber.getEmail()).isPresent()) {
             throw new IllegalArgumentException("이미 사용 중인 이메일입니다: " + subscriber.getEmail());
         }
+        
+        // 비밀번호 해싱
+        subscriber.setPassword(passwordEncoder.encode(subscriber.getPassword()));
+        
+        // 초기값 설정
+        if (subscriber.getPoint() == null) {
+            subscriber.setPoint(1000);
+        }
+        subscriber.setJoinStatus(true);
+        
         Subscriber saved = subscriberRepository.save(subscriber);
         
         streamBridge.send("event-out", 
             "회원가입: " + saved.getEmail() + 
-            ", 초기 포인트: " + saved.getPoint()
+            ", 초기 포인트: " + saved.getPoint() +
+            ", 주소: " + saved.getAddress() // 새 필드 반영
         );
         
         return saved;
@@ -88,13 +103,13 @@ public class SubscriberService {
         );
     }
 
-    // 포인트 충전
+    // 포인트 충전 (null-safe 처리)
     @Transactional
     public void addPoints(Long subscriberId, int amount) {
         Subscriber subscriber = subscriberRepository.findById(subscriberId)
             .orElseThrow(() -> new RuntimeException("회원이 없습니다."));
         
-        int beforePoints = subscriber.getPoint();
+        int beforePoints = subscriber.getPoint() != null ? subscriber.getPoint() : 0;
         subscriber.addPoints(amount);
         subscriberRepository.save(subscriber);
         
