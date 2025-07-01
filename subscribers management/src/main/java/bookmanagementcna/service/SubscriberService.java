@@ -11,9 +11,13 @@ public class SubscriberService {
     @Autowired
     private SubscriberRepository subscriberRepository;
 
-    // 회원가입
+    // 회원가입 (중복 체크 추가)
     @Transactional
     public Subscriber register(Subscriber subscriber) {
+        // 🔥 이메일 중복 체크
+        if (subscriberRepository.findByEmail(subscriber.getEmail()).isPresent()) {
+            throw new IllegalArgumentException("이미 사용 중인 이메일입니다: " + subscriber.getEmail());
+        }
         return subscriberRepository.save(subscriber);
     }
 
