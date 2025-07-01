@@ -27,7 +27,7 @@ public class SubscriptionListViewHandler {
             // view 객체에 이벤트의 Value 를 set 함
             subscriber.setId(login.getId());
             subscriber.setName(login.getName());
-            //subscriber.setEmail(event.getEmail());
+            subscriber.setEmail(login.getEmail());
             subscriber.setPoint(login.getPoint());
             subscriber.setJoinStatus(login.getJoinStatus());
 
@@ -37,5 +37,7 @@ public class SubscriptionListViewHandler {
             e.printStackTrace();
         }
     }
+
+    
     //>>> DDD / CQRS
 }

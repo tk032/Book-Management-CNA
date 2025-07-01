@@ -62,4 +62,9 @@ public class DashboardController {
                         sub.getPoint()))
                 .collect(Collectors.toList());
         }
+
+        @GetMapping("/debug/books/raw")
+        public Iterable<BookList> getRawBooks() {
+        return bookListRepository.findAll();
+        }
 }
