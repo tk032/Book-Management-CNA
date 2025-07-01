@@ -19,7 +19,7 @@ import lombok.Data;
 @Entity
 @Table(name = "Service_table")
 @Data
-//<<< DDD / Aggregate Root
+
 public class Service {
 
     @Id
