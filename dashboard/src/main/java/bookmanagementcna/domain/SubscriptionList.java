@@ -8,9 +8,9 @@ import lombok.Data;
 
 //<<< EDA / CQRS
 @Entity
-@Table(name = "구독상태조회_table")
+@Table(name = "SubscriptionList_table")
 @Data
-public class 구독상태조회 {
+public class SubscriptionList {
 
     @Id
     //@GeneratedValue(strategy=GenerationType.AUTO)

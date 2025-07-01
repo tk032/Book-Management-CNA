@@ -31,4 +31,3 @@ public class BookPublicated extends AbstractEvent {
     }
 }
 
-

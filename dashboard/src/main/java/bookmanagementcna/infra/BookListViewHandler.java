@@ -65,6 +65,8 @@ public class BookListViewHandler {
         }
     }
 
+
+
     @StreamListener(KafkaProcessor.INPUT)
     public void whenReportResolved_then_DELETE_1(
         @Payload ReportResolved reportResolved
@@ -77,5 +79,6 @@ public class BookListViewHandler {
             e.printStackTrace();
         }
     }
+
     //>>> DDD / CQRS
 }

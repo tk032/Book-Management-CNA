@@ -9,9 +9,9 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>bookmanagementcna</groupId>
-	<artifactId>대시보드</artifactId>
+	<artifactId>dashboard</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>대시보드</name>
+	<name>dashboard</name>
 	<description>Demo project for Spring Boot</description>
 
 	<properties>
@@ -43,7 +43,7 @@
 		<dependency>
 				<groupId>org.projectlombok</groupId>
 				<artifactId>lombok</artifactId>
-				<version>1.18.12</version>
+				<version>1.18.30</version>
 				<scope>provided</scope>
 		</dependency>
 		<dependency>

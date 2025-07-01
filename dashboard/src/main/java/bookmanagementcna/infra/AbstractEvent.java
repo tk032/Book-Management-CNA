@@ -1,7 +1,7 @@
 package bookmanagementcna.infra;
 
 import bookmanagementcna.config.kafka.KafkaProcessor;
-import bookmanagementcna.대시보드Application;
+import bookmanagementcna.DashboardApplication;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.BeanUtils;
@@ -32,7 +32,7 @@ public class AbstractEvent {
         /**
          * spring streams 방식
          */
-        KafkaProcessor processor = 대시보드Application.applicationContext.getBean(
+        KafkaProcessor processor = DashboardApplication.applicationContext.getBean(
             KafkaProcessor.class
         );
         MessageChannel outputChannel = processor.outboundTopic();
