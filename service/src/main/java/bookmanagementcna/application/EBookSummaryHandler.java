@@ -1,21 +1,22 @@
 package bookmanagementcna.application;
 
-import bookmanagementcna.domain.전자책요약Command;
-import bookmanagementcna.domain.전자책요약됨;
+import bookmanagementcna.domain.EBookSummaryCommand;
+import bookmanagementcna.domain.EBookSummary;
 import bookmanagementcna.external.AISummaryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class 전자책요약Handler {
+public class EBookSummaryHandler {
 
     @Autowired
-    AISummaryService aiSummaryService;
+    private AISummaryService aiSummaryService;
 
-    public void handle(전자책요약Command command) {
+    public void handle(EBookSummaryCommand command) {
+        // GPT API를 통해 요약
         String summary = aiSummaryService.summarize(command.getBookContent());
 
-        전자책요약됨 event = new 전자책요약됨();
+        EBookSummary event = new EBookSummary();
         event.setBookId(command.getBookId());
         event.setSummary(summary);
         event.publishAfterCommit();

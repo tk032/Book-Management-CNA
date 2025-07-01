@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-
+//<<< Clean Arch / Inbound Adaptor
 
 @RestController
 // @RequestMapping(value="/services")
@@ -19,9 +19,5 @@ public class ServiceController {
 
     @Autowired
     ServiceRepository serviceRepository;
-
-    public void handle(PublishCommand command) {
-        Service service = serviceRepository.findById(command.getId()).orElseThrow();
-        service.publishRequest(command);
-    } //출간요청, 전자책 요약
 }
+//>>> Clean Arch / Inbound Adaptor
