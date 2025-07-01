@@ -1,5 +1,5 @@
 package bookmanagementcna.domain;
-
+ 
 import bookmanagementcna.AdminApplication;
 import bookmanagementcna.domain.AuthorApproved;
 import bookmanagementcna.domain.BookApproved;
@@ -12,33 +12,33 @@ import java.util.List;
 import java.util.Map;
 import javax.persistence.*;
 import lombok.Data;
-
+ 
 @Entity
 @Table(name = "Admin_table")
 @Data
 //<<< DDD / Aggregate Root
 public class Admin {
-
+ 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-
+ 
     private Long requestId;
-
+ 
     private String requestType; // AUTHOR, BOOK, REPORT
-
+ 
     private Long targetId;
-
+ 
     private Date requestedAt;
-
+ 
     private String status;      // APPROVED, REJECTED, RESOLVED
-
+ 
     private Long adminId;
-
+ 
     private Date approvedAt;
-
+ 
     private String message;
-
+ 
     @PostPersist
     public void onPostPersist() {
         if ("REPORT".equals(this.requestType) && "RESOLVED".equals(this.status)) {
@@ -50,7 +50,7 @@ public class Admin {
             bookApproved.publishAfterCommit();
         }
     }
-
+ 
     @PostUpdate
     public void onPostUpdate() {
         if ("AUTHOR".equals(this.requestType) && "APPROVED".equals(this.status)) {
@@ -58,43 +58,42 @@ public class Admin {
             authorApproved.publishAfterCommit();
         }
     }
-
+ 
     public static AdminRepository repository() {
         AdminRepository adminRepository = AdminApplication.applicationContext.getBean(
             AdminRepository.class
         );
         return adminRepository;
     }
-
+ 
     //<<< Clean Arch / Port Method
     public static void requestRegister(RegistrationRequested event) {
         Admin admin = new Admin();
         admin.setRequestId(event.getId());
         admin.setRequestType("AUTHOR");
-        admin.setEmail(event.getEmail());
         admin.setStatus("PENDING");
         admin.setRequestedAt(new Date());
         repository().save(admin);
-
+ 
         admin.approveAuthor();
         repository().save(admin);
     }
-
+ 
     //>>> Clean Arch / Port Method
     //<<< Clean Arch / Port Method
     public static void requestRegister(PublishRequestRegistered event) {
        Admin admin = new Admin();
         admin.setRequestId(event.getId());
         admin.setRequestType("BOOK");
-        admin.setAuthorId(event.getAuthorId());
+        admin.setTargetId(event.getAuthorId());
         admin.setStatus("PENDING");
         admin.setRequestedAt(new Date());
         repository().save(admin);
-
+ 
         admin.approveBook();
         repository().save(admin);
     }
-
+ 
     public static void requestResolve(ReportResolved event) {
         Admin admin = new Admin();
         admin.setRequestId(event.getId());
@@ -103,32 +102,32 @@ public class Admin {
         admin.setStatus("PENDING");
         admin.setRequestedAt(new Date());
         repository().save(admin);
-
+ 
         admin.resolveReport();
         repository().save(admin);
     }
-
+ 
     public void approveAuthor() {
         this.status = "APPROVED";
         this.approvedAt = new Date();
     }
-
+ 
     public void approveBook() {
         this.status = "APPROVED";
         this.approvedAt = new Date();
     }
-
+ 
     public void resolveReport() {
         this.status = "APPROVED";
         this.approvedAt = new Date();
     }
-
+ 
     public static void approveLogin(Login login) {
         System.out.println("Login approved for: " + login.getUserId());
     }
-
+ 
    public static void approveLogout(Logout logout) {
         System.out.println("Logout approved for: " + logout.getUserId());
     }
-
+ 
 }
