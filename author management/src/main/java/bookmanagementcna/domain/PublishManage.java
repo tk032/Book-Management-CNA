@@ -35,53 +35,60 @@ public class PublishManage {
 
     private String publishStatus;
 
+
+    public void requestPublication() {
+        this.publishStatus = "REQUESTED";
+    }
+
+    public void approve() {
+        this.publishStatus = "APPROVED";
+    }
+
+    public void reject() {
+        this.publishStatus = "REJECTED";
+    }
+
+
     @PostPersist
     public void onPostPersist() {
-        SaveCompleted saveCompleted = new SaveCompleted(this);
-        saveCompleted.publishAfterCommit();
+        if ("REQUESTED".equals(this.publishStatus)) {
+            PublishRequestRegistered event = new PublishRequestRegistered(this);
+            event.publishAfterCommit();
+        }
 
-        RequestApproved requestApproved = new RequestApproved(this);
-        requestApproved.publishAfterCommit();
-
-        PublishRequestRegistered publishRequestRegistered = new PublishRequestRegistered(
-            this
-        );
-        publishRequestRegistered.publishAfterCommit();
+        if (Boolean.TRUE.equals(this.finalSave)) {
+            SaveCompleted event = new SaveCompleted(this);
+            event.publishAfterCommit();
+        }
+//        SaveCompleted saveCompleted = new SaveCompleted(this);
+//        saveCompleted.publishAfterCommit();
+//
+//        RequestApproved requestApproved = new RequestApproved(this);
+//        requestApproved.publishAfterCommit();
+//
+//        PublishRequestRegistered publishRequestRegistered = new PublishRequestRegistered(
+//            this
+//        );
+//        publishRequestRegistered.publishAfterCommit();
     }
 
     public static PublishManageRepository repository() {
-        PublishManageRepository publishManageRepository = AuthorManagementApplication.applicationContext.getBean(
+        return AuthorManagementApplication.applicationContext.getBean(
             PublishManageRepository.class
         );
-        return publishManageRepository;
     }
 
     //<<< Clean Arch / Port Method
     public static void approvePublish(BookApproved bookApproved) {
-        //implement business logic here:
+        repository().findById(Long.valueOf(bookApproved.getTargetId()))
+                .ifPresent(publishManage -> {
 
-        /** Example 1:  new item 
-        PublishManage publishManage = new PublishManage();
-        repository().save(publishManage);
+                    publishManage.approve(); // 상태 변경: "APPROVED"
+                    repository().save(publishManage);
 
-        RequestApproved requestApproved = new RequestApproved(publishManage);
-        requestApproved.publishAfterCommit();
-        */
-
-        /** Example 2:  finding and process
-        
-
-        repository().findById(bookApproved.get???()).ifPresent(publishManage->{
-            
-            publishManage // do something
-            repository().save(publishManage);
-
-            RequestApproved requestApproved = new RequestApproved(publishManage);
-            requestApproved.publishAfterCommit();
-
-         });
-        */
-
+                    RequestApproved event = new RequestApproved(publishManage);
+                    event.publishAfterCommit();
+                });
     }
     //>>> Clean Arch / Port Method
 

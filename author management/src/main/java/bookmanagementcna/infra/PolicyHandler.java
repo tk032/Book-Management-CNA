@@ -34,12 +34,20 @@ public class PolicyHandler {
         @Payload AuthorApproved authorApproved
     ) {
         AuthorApproved event = authorApproved;
+        System.out.println("승인 대상 ID: " + authorApproved.getTargetId());
         System.out.println(
             "\n\n##### listener ApproveAuthor : " + authorApproved + "\n\n"
         );
 
-        // Sample Logic //
-        Author.approveAuthor(event);
+//        // Sample Logic //
+//        Author.approveAuthor(event);
+
+        try {
+            Author.approveAuthor(event);
+        } catch(Exception e) {
+            System.err.println("[ERROR] Author 승인 처리 중 예외 발생: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 
     @StreamListener(

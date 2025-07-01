@@ -9,7 +9,7 @@ import lombok.*;
 @ToString
 public class AuthorApproved extends AbstractEvent {
 
-    private Long id;
+    private Long id; // 승인id
     private String requestId;
     private String requestType;
     private String targetId;
@@ -18,4 +18,16 @@ public class AuthorApproved extends AbstractEvent {
     private String adminId;
     private String approvedAt;
     private String message;
+
+    public AuthorApproved(Author author) {
+        super(author);
+        this.targetId = String.valueOf(author.getId());
+        this.status = author.getRegisterStatus(); // String이라면 그대로 사용
+        this.requestType = "AUTHOR_APPROVAL";
+    }
+
+    public AuthorApproved() {
+        super();
+    }
+
 }
