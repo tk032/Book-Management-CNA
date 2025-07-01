@@ -85,7 +85,7 @@ public class Service {
     public void publishRequest(PublishCommand cmd) {
         this.isPublishCompleted = true;
         ServicePublished event = new ServicePublished(this);
-        event.publishAfterCommit(); // 1. 이벤트 발행
+        event.publishAfterCommit(); 
     }
 
 }
