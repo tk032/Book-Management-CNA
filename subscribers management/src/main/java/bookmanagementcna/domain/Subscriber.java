@@ -15,7 +15,7 @@ public class Subscriber {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-
+    @Column(unique = true)
     private String email;
     private String name;
     private String message;
@@ -46,13 +46,20 @@ public class Subscriber {
         domainEvents.clear();
     }
 
+    @PrePersist
+    public void onPrePersist() {
+        if (this.point == null) {
+            this.point = 1000; // 가입 기본 포인트 설정
+        }
+    }
+
     @PostPersist
     public void onPostPersist() {
         // 회원가입 시점에만 필요한 이벤트만 등록
         SignedIn signedIn = new SignedIn(this);
         registerEvent(signedIn);
-
-        this.point = 1000; // 가입 기본 포인트 설정
+        
+        // 포인트 지급 이벤트 등록 (값은 이미 설정됨)
         PointsAdded pointsAdded = new PointsAdded(this);
         registerEvent(pointsAdded);
     }
