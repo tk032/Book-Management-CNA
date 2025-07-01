@@ -3,6 +3,8 @@ import { Box, TextField, Button, Typography, Alert, CircularProgress } from '@mu
 import { useNavigate } from 'react-router-dom';
 import { signup } from '../api/authService';
 
+
+
 export default function SignupPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
