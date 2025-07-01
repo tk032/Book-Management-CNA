@@ -18,4 +18,8 @@ public class Login extends AbstractEvent {
     private Boolean ktCustomer;
     private String loginStatus;
 
+    public Long getUserId() {
+        return id;
+    }
+
 }

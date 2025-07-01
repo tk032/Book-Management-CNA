@@ -27,9 +27,9 @@ public class Admin {
 
     private String requestType; // AUTHOR, BOOK, REPORT
 
-    private String targetId;
+    private Long targetId;
 
-    private String requestedAt;
+    private Date requestedAt;
 
     private String status;      // APPROVED, REJECTED, RESOLVED
 
@@ -41,11 +41,11 @@ public class Admin {
 
     @PostPersist
     public void onPostPersist() {
-        if ("REPORT".equals(this.requestType)) {
+        if ("REPORT".equals(this.requestType) && "RESOLVED".equals(this.status)) {
             ReportResolved reportResolved = new ReportResolved(this);
             reportResolved.publishAfterCommit();
         }
-        else if ("BOOK".equals(this.requestType)) {
+        else if ("BOOK".equals(this.requestType) && "APPROVED".equals(this.status)) {
             BookApproved bookApproved = new BookApproved(this);
             bookApproved.publishAfterCommit();
         }
@@ -53,7 +53,7 @@ public class Admin {
 
     @PostUpdate
     public void onPostUpdate() {
-        if ("AUTHOR".equals(this.requestType)) {
+        if ("AUTHOR".equals(this.requestType) && "APPROVED".equals(this.status)) {
             AuthorApproved authorApproved = new AuthorApproved(this);
             authorApproved.publishAfterCommit();
         }
@@ -71,9 +71,12 @@ public class Admin {
         Admin admin = new Admin();
         admin.setRequestId(event.getId());
         admin.setRequestType("AUTHOR");
-        admin.setTargetId(event.getEmail());
+        admin.setEmail(event.getEmail());
         admin.setStatus("PENDING");
-        admin.setRequestedAt(new Date().toString());
+        admin.setRequestedAt(new Date());
+        repository().save(admin);
+
+        admin.approveAuthor();
         repository().save(admin);
     }
 
@@ -83,20 +86,41 @@ public class Admin {
        Admin admin = new Admin();
         admin.setRequestId(event.getId());
         admin.setRequestType("BOOK");
-        admin.setTargetId(event.getAuthorId());
+        admin.setAuthorId(event.getAuthorId());
         admin.setStatus("PENDING");
-        admin.setRequestedAt(new Date().toString());
+        admin.setRequestedAt(new Date());
+        repository().save(admin);
+
+        admin.approveBook();
         repository().save(admin);
     }
 
-    public static void requestResolve(ContentReported event) {
+    public static void requestResolve(ReportResolved event) {
         Admin admin = new Admin();
         admin.setRequestId(event.getId());
         admin.setRequestType("REPORT");
-        admin.setTargetId(event.getReportedContentId());
+        admin.setTargetId(event.getTargetId());
         admin.setStatus("PENDING");
-        admin.setRequestedAt(new Date().toString());
+        admin.setRequestedAt(new Date());
         repository().save(admin);
+
+        admin.resolveReport();
+        repository().save(admin);
+    }
+
+    public void approveAuthor() {
+        this.status = "APPROVED";
+        this.approvedAt = new Date();
+    }
+
+    public void approveBook() {
+        this.status = "APPROVED";
+        this.approvedAt = new Date();
+    }
+
+    public void resolveReport() {
+        this.status = "APPROVED";
+        this.approvedAt = new Date();
     }
 
     public static void approveLogin(Login login) {

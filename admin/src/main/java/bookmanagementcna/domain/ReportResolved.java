@@ -14,8 +14,8 @@ public class ReportResolved extends AbstractEvent {
     private Long id;
     private Long requestId;
     private String requestType;
-    private String targetId;
-    private String requestedAt;
+    private Long targetId;
+    private Date requestedAt;
     private String status;
     private Long adminId;
     private Date approvedAt;
@@ -23,8 +23,8 @@ public class ReportResolved extends AbstractEvent {
 
     public ReportResolved(Admin aggregate) {
         super(aggregate);
-        this.requestId = aggregate.getRequestId();
-        this.targetId = aggregate.getTargetId();
+        this.requestId = Long.valueOf(aggregate.getRequestId());
+        this.targetId = Long.valueOf(aggregate.getTargetId());
     }
 
     public ReportResolved() {

@@ -17,4 +17,8 @@ public class Logout extends AbstractEvent {
     private Boolean joinStatus;
     private Boolean ktCustomer;
     private String loginStatus;
+
+    public Long getUserId() {
+        return id;
+    }
 }
