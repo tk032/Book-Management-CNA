@@ -2,6 +2,7 @@ package bookmanagementcna.service;
 
 import bookmanagementcna.domain.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.stream.function.StreamBridge;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -10,15 +11,24 @@ public class SubscriberService {
 
     @Autowired
     private SubscriberRepository subscriberRepository;
+    
+    @Autowired
+    private StreamBridge streamBridge;
 
-    // 회원가입 (중복 체크 추가)
+    // 회원가입
     @Transactional
     public Subscriber register(Subscriber subscriber) {
-        // 🔥 이메일 중복 체크
         if (subscriberRepository.findByEmail(subscriber.getEmail()).isPresent()) {
             throw new IllegalArgumentException("이미 사용 중인 이메일입니다: " + subscriber.getEmail());
         }
-        return subscriberRepository.save(subscriber);
+        Subscriber saved = subscriberRepository.save(subscriber);
+        
+        streamBridge.send("event-out", 
+            "회원가입: " + saved.getEmail() + 
+            ", 초기 포인트: " + saved.getPoint()
+        );
+        
+        return saved;
     }
 
     // 로그인
@@ -28,6 +38,11 @@ public class SubscriberService {
             .orElseThrow(() -> new RuntimeException("존재하지 않는 회원입니다."));
         subscriber.login();
         subscriberRepository.save(subscriber);
+        
+        streamBridge.send("event-out", 
+            "로그인: " + email + 
+            ", 현재 포인트: " + subscriber.getPoint()
+        );
     }
 
     // 로그아웃
@@ -37,15 +52,40 @@ public class SubscriberService {
             .orElseThrow(() -> new RuntimeException("존재하지 않는 회원입니다."));
         subscriber.logout();
         subscriberRepository.save(subscriber);
+        
+        streamBridge.send("event-out", 
+            "로그아웃: " + email + 
+            ", 남은 포인트: " + subscriber.getPoint()
+        );
     }
 
-    // 책 열람 (포인트 차감 또는 무제한 열람)
+    // 책 열람 (요금제 상태에 따라 포인트 차감 여부 결정)
     @Transactional
     public void readContent(Long subscriberId, int point) throws Subscriber.InsufficientPointsException {
         Subscriber subscriber = subscriberRepository.findById(subscriberId)
             .orElseThrow(() -> new RuntimeException("회원이 없습니다."));
-        subscriber.usePointForContent(point);
+        
+        int beforePoints = subscriber.getPoint();
+        boolean isUnlimited = subscriber.getUnlimitedPlan();
+        
+        // 요금제 가입 상태면 포인트 차감 없음
+        String pointMessage;
+        if (isUnlimited) {
+            pointMessage = " (요금제 가입 상태: 포인트 미차감)";
+        } else {
+            subscriber.usePointForContent(point);
+            pointMessage = ", 사용 포인트: " + point;
+        }
+        
         subscriberRepository.save(subscriber);
+        
+        streamBridge.send("event-out", 
+            "책 열람: 회원ID " + subscriberId + 
+            pointMessage +
+            ", 남은 포인트: " + subscriber.getPoint() +
+            " (변경 전: " + beforePoints + ")" +
+            ", 요금제 상태: " + (isUnlimited ? "가입" : "미가입")
+        );
     }
 
     // 포인트 충전
@@ -53,8 +93,17 @@ public class SubscriberService {
     public void addPoints(Long subscriberId, int amount) {
         Subscriber subscriber = subscriberRepository.findById(subscriberId)
             .orElseThrow(() -> new RuntimeException("회원이 없습니다."));
+        
+        int beforePoints = subscriber.getPoint();
         subscriber.addPoints(amount);
         subscriberRepository.save(subscriber);
+        
+        streamBridge.send("event-out", 
+            "포인트 충전: 회원ID " + subscriberId + 
+            ", 충전량: " + amount + 
+            ", 남은 포인트: " + subscriber.getPoint() +
+            " (변경 전: " + beforePoints + ")"
+        );
     }
 
     // 요금제 가입
@@ -62,8 +111,17 @@ public class SubscriberService {
     public void subscribeUnlimitedPlan(Long subscriberId) {
         Subscriber subscriber = subscriberRepository.findById(subscriberId)
             .orElseThrow(() -> new RuntimeException("회원이 없습니다."));
+        
+        boolean beforeStatus = subscriber.getUnlimitedPlan();
         subscriber.subscribeUnlimitedPlan();
         subscriberRepository.save(subscriber);
+        
+        streamBridge.send("event-out", 
+            "요금제 가입: 회원ID " + subscriberId + 
+            ", 현재 상태: " + subscriber.getUnlimitedPlan() +
+            " (변경 전: " + beforeStatus + ")" +
+            ", 남은 포인트: " + subscriber.getPoint()
+        );
     }
 
     // 요금제 해지
@@ -71,7 +129,16 @@ public class SubscriberService {
     public void unsubscribeUnlimitedPlan(Long subscriberId) {
         Subscriber subscriber = subscriberRepository.findById(subscriberId)
             .orElseThrow(() -> new RuntimeException("회원이 없습니다."));
+        
+        boolean beforeStatus = subscriber.getUnlimitedPlan();
         subscriber.unsubscribeUnlimitedPlan();
         subscriberRepository.save(subscriber);
+        
+        streamBridge.send("event-out", 
+            "요금제 해지: 회원ID " + subscriberId + 
+            ", 현재 상태: " + subscriber.getUnlimitedPlan() +
+            " (변경 전: " + beforeStatus + ")" +
+            ", 남은 포인트: " + subscriber.getPoint()
+        );
     }
 }
