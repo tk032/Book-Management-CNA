@@ -1,6 +1,6 @@
-package your.bookmanagementcna.name.application;
+package bookmanagementcna.domain;
 
-import your.bookmanagementcna.name.domain.*;
+import bookmanagementcna.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

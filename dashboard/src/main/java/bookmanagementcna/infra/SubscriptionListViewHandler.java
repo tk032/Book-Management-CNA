@@ -11,11 +11,11 @@ import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Service;
 
 @Service
-public class 구독상태조회ViewHandler {
+public class SubscriptionListViewHandler {
 
     //<<< DDD / CQRS
     @Autowired
-    private 구독상태조회Repository 구독상태조회Repository;
+    private SubscriptionListRepository subscriptionListRepository;
 
     @StreamListener(KafkaProcessor.INPUT)
     public void whenLogin_then_CREATE_1(@Payload Login login) {
@@ -23,24 +23,16 @@ public class 구독상태조회ViewHandler {
             if (!login.validate()) return;
 
             // view 객체 생성
-            구독상태조회 구독상태조회 = new 구독상태조회();
+            SubscriptionList subscriber = new SubscriptionList();
             // view 객체에 이벤트의 Value 를 set 함
-            구독상태조회.setId(login.getId());
+            subscriber.setId(login.getId());
+            subscriber.setName(login.getName());
+            //subscriber.setEmail(event.getEmail());
+            subscriber.setPoint(login.getPoint());
+            subscriber.setJoinStatus(login.getJoinStatus());
+
             // view 레파지 토리에 save
-            구독상태조회Repository.save(구독상태조회);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    @StreamListener(KafkaProcessor.INPUT)
-    public void whenContentViewEnabled_then_UPDATE_1(
-        @Payload ContentViewEnabled contentViewEnabled
-    ) {
-        try {
-            if (!contentViewEnabled.validate()) return;
-            // view 객체 조회
-
+            subscriptionListRepository.save(subscriber);
         } catch (Exception e) {
             e.printStackTrace();
         }

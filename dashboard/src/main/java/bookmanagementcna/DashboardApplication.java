@@ -10,12 +10,13 @@ import org.springframework.context.ApplicationContext;
 @SpringBootApplication
 @EnableBinding(KafkaProcessor.class)
 @EnableFeignClients
-public class 대시보드Application {
+public class DashboardApplication {
 
     public static ApplicationContext applicationContext;
 
     public static void main(String[] args) {
         applicationContext =
-            SpringApplication.run(대시보드Application.class, args);
+            SpringApplication.run(DashboardApplication.class, args);
     }
 }
+

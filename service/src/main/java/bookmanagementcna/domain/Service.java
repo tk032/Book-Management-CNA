@@ -82,19 +82,10 @@ public class Service {
         return serviceRepository;
     }
 
-    @Entity
-public class Service {
-    @Id
-    private Long id;
-    private String publicationId;
-    private String title;
-    private Boolean isBestSeller;
-    private Boolean isPublishCompleted;
-
     public void publishRequest(PublishCommand cmd) {
         this.isPublishCompleted = true;
         ServicePublished event = new ServicePublished(this);
         event.publishAfterCommit(); // 1. 이벤트 발행
     }
-  }
+
 }

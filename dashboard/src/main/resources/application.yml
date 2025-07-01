@@ -3,7 +3,7 @@ server:
 
 spring:
   application:
-    name: 대시보드
+    name: dashboard
 ---
 
 spring:
@@ -29,7 +29,7 @@ spring:
                   serde: org.apache.kafka.common.serialization.Serdes$StringSerde
       bindings:
         event-in:
-          group: 대시보드
+          group: dashboard
 #<<< EDA / Topic Name
           destination: bookmanagementcna
 #>>> EDA / Topic Name
@@ -74,7 +74,7 @@ spring:
                   serde: org.apache.kafka.common.serialization.Serdes$StringSerde
       bindings:
         event-in:
-          group: 대시보드
+          group: dashboard
           destination: bookmanagementcna
           contentType: application/json
         event-out:

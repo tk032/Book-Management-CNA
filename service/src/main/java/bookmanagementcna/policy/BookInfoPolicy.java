@@ -1,7 +1,7 @@
 package bookmanagementcna.policy;
 
+import bookmanagementcna.config.kafka.KafkaProcessor;
 import bookmanagementcna.domain.*;
-import bookmanagementcna.infra.KafkaProcessor;
 import org.springframework.cloud.stream.annotation.StreamListener;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Service;
