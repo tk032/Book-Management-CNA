@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 //<<< Clean Arch / Inbound Adaptor
 
 @RestController
+@CrossOrigin(origins = "*")
 // @RequestMapping(value="/services")
 @Transactional
 public class ServiceController {

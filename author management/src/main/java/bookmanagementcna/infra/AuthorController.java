@@ -15,7 +15,8 @@ import org.springframework.web.bind.annotation.RestController;
 //<<< Clean Arch / Inbound Adaptor
 
 @RestController
-@RequestMapping(value="/authors")
+@CrossOrigin(origins = "*")
+// @RequestMapping(value="/authors")
 @Transactional
 public class AuthorController {
 
