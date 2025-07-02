@@ -1,12 +1,9 @@
 package bookmanagementcna.domain;
 
-import bookmanagementcna.domain.*;
 import bookmanagementcna.infra.AbstractEvent;
-import java.time.LocalDate;
 import java.util.*;
 import lombok.*;
 
-//<<< DDD / Domain Event
 @Data
 @ToString
 public class EBookSummary extends AbstractEvent {
@@ -17,7 +14,7 @@ public class EBookSummary extends AbstractEvent {
     private Date generatedAt;
     private String status;
 
-    public EBookSummary(Service aggregate) {
+    public EBookSummary(EBookService aggregate) {
         super(aggregate);
     }
 
@@ -25,4 +22,3 @@ public class EBookSummary extends AbstractEvent {
         super();
     }
 }
-//>>> DDD / Domain Event
