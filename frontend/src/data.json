@@ -1,0 +1,50 @@
+[
+  {
+    "id": 1,
+    "title": "비 오는 날의 산책",
+    "author": "김작가",
+    "date": "2025-05-30",
+    "description": "빗소리를 들으며 걷는 여유로운 하루를 담은 에세이입니다.",
+    "imageUrl": "https://via.placeholder.com/180x260?text=비+오는+날"
+  },
+  {
+    "id": 2,
+    "title": "별 헤는 밤",
+    "author": "윤시인",
+    "date": "2025-05-25",
+    "description": "밤하늘을 바라보며 별과의 대화를 시로 풀어낸 감성적인 작품입니다.",
+    "imageUrl": "https://via.placeholder.com/180x260?text=별+헤는+밤"
+  },
+  {
+    "id": 3,
+    "title": "숲 속의 이야기",
+    "author": "이작가",
+    "date": "2025-05-20",
+    "description": "조용한 숲의 속삭임과 그 안에 담긴 사색을 이야기합니다.",
+    "imageUrl": "https://via.placeholder.com/180x260?text=숲+속의+이야기"
+  },
+  {
+    "id": 4,
+    "title": "안개 속 풍경",
+    "author": "박문학",
+    "date": "2025-05-15",
+    "description": "보이지 않는 길을 걷는 듯한, 안개 낀 마음을 담은 짧은 산문입니다.",
+    "imageUrl": "https://via.placeholder.com/180x260?text=안개+속+풍경"
+  },
+  {
+    "id": 5,
+    "title": "달빛 산책",
+    "author": "최에세이",
+    "date": "2025-05-10",
+    "description": "은은한 달빛 아래에서 자신을 돌아보는 시간에 대한 이야기입니다.",
+    "imageUrl": "https://via.placeholder.com/180x260?text=달빛+산책"
+  },
+  {
+    "id": 6,
+    "title": "여름의 노래",
+    "author": "정계절",
+    "date": "2025-05-05",
+    "description": "뜨거운 햇살과 바람 속 여름날의 추억을 담은 시집입니다.",
+    "imageUrl": "https://via.placeholder.com/180x260?text=여름+의+노래"
+  }
+]

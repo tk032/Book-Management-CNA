@@ -1,80 +1,112 @@
 package bookmanagementcna.domain;
 
 import bookmanagementcna.SubscribersManagementApplication;
-import bookmanagementcna.domain.ContentViewEnabled;
-import bookmanagementcna.domain.Login;
-import bookmanagementcna.domain.Logout;
-import bookmanagementcna.domain.PointsAdded;
-import bookmanagementcna.domain.PointsUsed;
-import bookmanagementcna.domain.SignedIn;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.time.LocalDate;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import javax.persistence.*;
 import lombok.Data;
 
 @Entity
 @Table(name = "Subscriber_table")
 @Data
-//<<< DDD / Aggregate Root
 public class Subscriber {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-
+    @Column(unique = true)
     private String email;
-
+    private String password;
     private String name;
-
+    private String address;
     private String message;
-
     private Integer point;
-
     private Boolean joinStatus;
-
     private Boolean ktCustomer;
-    
     private String loginStatus;
+    private Boolean unlimitedPlan = false;
+
+    @Transient
+    private final List<Object> domainEvents = new ArrayList<>();
+
+    public void registerEvent(Object event) {
+        this.domainEvents.add(event);
+    }
+
+    public List<Object> getDomainEvents() {
+        return Collections.unmodifiableList(domainEvents);
+    }
+
+    public void clearEvents() {
+        domainEvents.clear();
+    }
+
+    @PrePersist
+    public void onPrePersist() {
+        if (this.point == null) {
+            this.point = 1000;
+        }
+    }
 
     @PostPersist
     public void onPostPersist() {
-        // 회원가입 시점에만 필요한 이벤트만 발행
         SignedIn signedIn = new SignedIn(this);
-        signedIn.publishAfterCommit();
-        
-        this.point = 1000; // 가입 기본 포인트 설정
+        registerEvent(signedIn);
         PointsAdded pointsAdded = new PointsAdded(this);
-        pointsAdded.publishAfterCommit();
+        registerEvent(pointsAdded);
     }
 
-    // 로그인
     public void login() {
         this.loginStatus = "LOGIN";
         Login login = new Login(this);
-        login.publishAfterCommit();
+        registerEvent(login);
     }
 
-    // 로그아웃
     public void logout() {
         this.loginStatus = "LOGOUT";
         Logout logout = new Logout(this);
-        logout.publishAfterCommit();
+        registerEvent(logout);
     }
 
-    // 콘텐츠 열람 시 포인트 차감 및 열람 가능 이벤트 발행
-    public void usePointForContent(int amount) {
-        if (this.point != null && this.point >= amount) {
-            this.point -= amount;
-            PointsUsed pointsUsed = new PointsUsed(this);
-            pointsUsed.publishAfterCommit();
+    public void usePointForContent(int amount) throws InsufficientPointsException {
+        if (Boolean.TRUE.equals(this.unlimitedPlan)) {
             ContentViewEnabled contentViewEnabled = new ContentViewEnabled(this);
-            contentViewEnabled.publishAfterCommit();
+            registerEvent(contentViewEnabled);
+            return;
         }
-        // TODO: 포인트 부족 시 예외 처리 필요
+        if (this.point == null || this.point < amount) {
+            throw new InsufficientPointsException(
+                "포인트가 " + (amount - (this.point != null ? this.point : 0)) + "점 부족해요!"
+            );
+        }
+        this.point -= amount;
+        PointsUsed pointsUsed = new PointsUsed(this);
+        registerEvent(pointsUsed);
+        ContentViewEnabled contentViewEnabled = new ContentViewEnabled(this);
+        registerEvent(contentViewEnabled);
+    }
+
+    public void addPoints(int amount) {
+        if (amount <= 0) {
+            throw new IllegalArgumentException("0 이상의 포인트만 충전 가능해요!");
+        }
+        this.point = (this.point == null) ? amount : this.point + amount;
+        PointsAdded pointsAdded = new PointsAdded(this);
+        registerEvent(pointsAdded);
+    }
+
+    public void subscribeUnlimitedPlan() {
+        this.unlimitedPlan = true;
+    }
+
+    public void unsubscribeUnlimitedPlan() {
+        this.unlimitedPlan = false;
+    }
+
+    public static class InsufficientPointsException extends Exception {
+        public InsufficientPointsException(String message) {
+            super(message);
+        }
     }
 
     public static SubscriberRepository repository() {
@@ -84,66 +116,23 @@ public class Subscriber {
         return subscriberRepository;
     }
 
-    //<<< Clean Arch / Port Method
-    public static void updateFeedWhenBookInfoTransferred(
-        BookPublicated bookPublicated
-    ) {
-        //implement business logic here:
-
-        /** Example 1:  new item 
-        Subscriber subscriber = new Subscriber();
-        repository().save(subscriber);
-
-        */
-
-        /** Example 2:  finding and process
-        
-        // if bookPublicated.gptApiId exists, use it
-        
-        // ObjectMapper mapper = new ObjectMapper();
-        // Map<, Object> serviceMap = mapper.convertValue(bookPublicated.getGptApiId(), Map.class);
-
-        repository().findById(bookPublicated.get???()).ifPresent(subscriber->{
-            
-            subscriber // do something
-            repository().save(subscriber);
-
-
-         });
-        */
-
+    public static void updateFeedWhenBookInfoTransferred(BookPublicated bookPublicated) {
+        // 구현 로직 생략
     }
 
-    //>>> Clean Arch / Port Method
-    //<<< Clean Arch / Port Method
     public static void bookInfoSave(BookInfoSended bookInfoSended) {
-        //implement business logic here:
-
-        /** Example 1:  new item 
-        Subscriber subscriber = new Subscriber();
-        repository().save(subscriber);
-
-        */
-
-        /** Example 2:  finding and process
-        
-        // if bookInfoSended.gptApiId exists, use it
-        
-        // ObjectMapper mapper = new ObjectMapper();
-        // Map<, Object> serviceMap = mapper.convertValue(bookInfoSended.getGptApiId(), Map.class);
-
-        repository().findById(bookInfoSended.get???()).ifPresent(subscriber->{
-            
-            subscriber // do something
-            repository().save(subscriber);
-
-
-         });
-        */
-
+        // 구현 로직 생략
     }
-    //>>> Clean Arch / Port Method
+
+
+    public void updateBookFeed(Long bookId, String title) {
+        // 실제 피드 업데이트 로직 구현
+        this.message = "New book: " + title; // 예시
+    }
+
+    public void addRecommendedBook(Long bookId) {
+        // 추천 도서 추가 로직 구현
+        this.message = "Recommended: " + bookId; // 예시
+    }
 
 }
-//>>> DDD / Aggregate Root
-

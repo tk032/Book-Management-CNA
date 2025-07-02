@@ -19,4 +19,6 @@ public class BookPublicated extends AbstractEvent {
     private String summaryText;
     private String coverImageUrl;
     private String message;
+    private String userEmail;
+    private Long bookId;
 }
