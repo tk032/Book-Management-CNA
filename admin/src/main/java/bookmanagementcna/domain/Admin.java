@@ -41,11 +41,11 @@ public class Admin {
 
     @PostPersist
     public void onPostPersist() {
-        if ("REPORT".equals(this.requestType) && "RESOLVED".equals(this.status)) {
+        if ("REPORT".equals(this.requestType)) {
             ReportResolved reportResolved = new ReportResolved(this);
             reportResolved.publishAfterCommit();
         }
-        else if ("BOOK".equals(this.requestType) && "APPROVED".equals(this.status)) {
+        else if ("BOOK".equals(this.requestType)) {
             BookApproved bookApproved = new BookApproved(this);
             bookApproved.publishAfterCommit();
         }
@@ -53,7 +53,7 @@ public class Admin {
 
     @PostUpdate
     public void onPostUpdate() {
-        if ("AUTHOR".equals(this.requestType) && "APPROVED".equals(this.status)) {
+        if ("AUTHOR".equals(this.requestType)) {
             AuthorApproved authorApproved = new AuthorApproved(this);
             authorApproved.publishAfterCommit();
         }
