@@ -7,5 +7,5 @@ import lombok.Data;
 @AllArgsConstructor
 public class EBookSummaryCommand {
     private Long bookId;
-    private String bookContent;
+    private String content;  // bookContent 에서 content 로 변경
 }

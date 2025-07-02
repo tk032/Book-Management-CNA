@@ -1,190 +1,68 @@
 package bookmanagementcna.domain;
 
-import bookmanagementcna.ServiceApplication;
-import bookmanagementcna.domain.AiLabelCreated;
-import bookmanagementcna.domain.BestsellerIdentified;
-import bookmanagementcna.domain.BookInfoSended;
-import bookmanagementcna.domain.BookPublicated;
-import bookmanagementcna.domain.EBookSummary;
-import bookmanagementcna.domain.ProductAutomaticallyRegistered;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import java.time.LocalDate;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
 import javax.persistence.*;
-import lombok.Data;
+import lombok.*;
+import java.util.*;
 
 @Entity
-@Table(name = "Service_table")
+@Table(name = "EBookService_table")
 @Data
-//<<< DDD / Aggregate Root
-public class EBookService {  // 여기서 클래스명 변경
+public class EBookService {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     private Long publicationId;
-
-    private String authorName;
-
-    private Long authorId;
-
     private String title;
-
-    private String summaryText;
-
+    private String content;
     private String coverImageUrl;
+    private boolean bestSeller;
+    private boolean active = true;
 
-    private String productRegistered;
-
-    private Boolean isPublishCompleted;
-
-    private String isBestSeller;
-
-    private String status;
-
-    private Date publishedDate;
-
-    private String message;
-
-    @PostPersist
-    public void onPostPersist() {
-        ProductAutomaticallyRegistered productAutomaticallyRegistered = new ProductAutomaticallyRegistered(
-            this
-        );
-        productAutomaticallyRegistered.publishAfterCommit();
-
-        BookPublicated bookPublicated = new BookPublicated(this);
-        bookPublicated.publishAfterCommit();
-
-        BestsellerIdentified bestsellerIdentified = new BestsellerIdentified(
-            this
-        );
-        bestsellerIdentified.publishAfterCommit();
-
-        BookInfoSended bookInfoSended = new BookInfoSended(this);
-        bookInfoSended.publishAfterCommit();
-
-        EBookSummary eBookSummary = new EBookSummary(this);
-        eBookSummary.publishAfterCommit();
-
-        AiLabelCreated aiLabelCreated = new AiLabelCreated(this);
-        aiLabelCreated.publishAfterCommit();
+    //  전자책 출판 요청 처리
+    public void requestPublish() {
+        System.out.println(">>> [EBookService] requestPublish 호출됨");
+        // 출판 요청 로직 구현
     }
 
-    public static EBookServiceRepository repository() {  // 리포지토리 이름도 EBookServiceRepository 로 변경 권장
-        EBookServiceRepository repository = ServiceApplication.applicationContext.getBean(
-            EBookServiceRepository.class
-        );
-        return repository;
+    //  베스트셀러로 표시
+    public void markAsBestSeller() {
+        this.bestSeller = true;
+        System.out.println(">>> [EBookService] markAsBestSeller 호출됨");
     }
 
-    //<<< Clean Arch / Port Method
-    public static void createAiCoverImage(RequestApproved requestApproved) {
-        //implement business logic here:
-
-        /** Example 1:  new item 
-        EBookService service = new EBookService();
-        repository().save(service);
-
-        */
-
-        /** Example 2:  finding and process
-        
-
-        repository().findById(requestApproved.get???()).ifPresent(service->{
-            
-            service // do something
-            repository().save(service);
-
-
-         });
-        */
-
+    //  전자책 요약 처리
+    public void summarizeEbook(String content) {
+        System.out.println(">>> [EBookService] summarizeEbook 호출됨: " + content);
+        // 요약 생성 로직 (예: AI 요약 API 호출 등)
     }
 
-    //>>> Clean Arch / Port Method
-    //<<< Clean Arch / Port Method
-    public static void bookRequest(PointsUsed pointsUsed) {
-        //implement business logic here:
-
-        /** Example 1:  new item 
-        EBookService service = new EBookService();
-        repository().save(service);
-
-        BookInfoSended bookInfoSended = new BookInfoSended(service);
-        bookInfoSended.publishAfterCommit();
-        */
-
-        /** Example 2:  finding and process
-        
-
-        repository().findById(pointsUsed.get???()).ifPresent(service->{
-            
-            service // do something
-            repository().save(service);
-
-            BookInfoSended bookInfoSended = new BookInfoSended(service);
-            bookInfoSended.publishAfterCommit();
-
-         });
-        */
-
+    //  AI 표지 이미지 생성 처리
+    public void updateCoverImage(String imageUrl) {
+        this.coverImageUrl = imageUrl;
+        System.out.println(">>> [EBookService] updateCoverImage 호출됨: " + imageUrl);
     }
 
-    //>>> Clean Arch / Port Method
-    //<<< Clean Arch / Port Method
-    public static void viewIncrease(PointsUsed pointsUsed) {
-        //implement business logic here:
-
-        /** Example 1:  new item 
-        EBookService service = new EBookService();
-        repository().save(service);
-
-        */
-
-        /** Example 2:  finding and process
-        
-
-        repository().findById(pointsUsed.get???()).ifPresent(service->{
-            
-            service // do something
-            repository().save(service);
-
-
-         });
-        */
-
+    //  이벤트 핸들러 메서드들
+    public void createAiCoverImage(RequestApproved event) {
+        System.out.println(">>> [EBookService] createAiCoverImage 호출됨: " + event);
+        // event로부터 이미지 URL 생성 후 적용 (예시)
+        updateCoverImage("https://ai-generated.com/image/" + event.getBookId());
     }
 
-    //>>> Clean Arch / Port Method
-    //<<< Clean Arch / Port Method
-    public static void deactivateContent(ReportResolved reportResolved) {
-        //implement business logic here:
-
-        /** Example 1:  new item 
-        EBookService service = new EBookService();
-        repository().save(service);
-
-        */
-
-        /** Example 2:  finding and process
-        
-
-        repository().findById(reportResolved.get???()).ifPresent(service->{
-            
-            service // do something
-            repository().save(service);
-
-
-         });
-        */
-
+    public void bookRequest(PointsUsed event) {
+        System.out.println(">>> [EBookService] bookRequest 호출됨: " + event);
+        // 포인트로 도서 요청 처리
     }
-    //>>> Clean Arch / Port Method
 
+    public void viewIncrease(PointsUsed event) {
+        System.out.println(">>> [EBookService] viewIncrease 호출됨: " + event);
+        // 조회수 증가 로직
+    }
+
+    public void deactivateContent(ReportResolved event) {
+        this.active = false;
+        System.out.println(">>> [EBookService] deactivateContent 호출됨: " + event);
+    }
 }
-//>>> DDD / Aggregate Root
