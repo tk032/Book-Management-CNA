@@ -4,6 +4,7 @@ import lombok.Data;
 
 @Data
 public class AiLabelCreatedCommand {
-    private Long publicationId;
-    private String label;
+    private String title;
+    private String description;
+    private Long bookId;
 }
