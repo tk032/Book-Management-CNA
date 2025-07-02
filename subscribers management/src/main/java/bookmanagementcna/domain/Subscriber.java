@@ -16,7 +16,6 @@ public class Subscriber {
     private Long id;
     @Column(unique = true)
     private String email;
-    private String password;
     private String name;
     private String address;
     private String message;
@@ -26,6 +25,7 @@ public class Subscriber {
     private String loginStatus;
     private String region;       // 지역 정보
     private String password;     // 비밀번호
+    private Boolean unlimitedPlan;
 
     @Transient
     private final List<Object> domainEvents = new ArrayList<>();

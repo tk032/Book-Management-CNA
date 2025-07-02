@@ -3,7 +3,6 @@ package bookmanagementcna.service;
 import bookmanagementcna.domain.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.stream.function.StreamBridge;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -30,7 +29,7 @@ public class SubscriberService {
 
         // 비밀번호 암호화
         subscriber.setPassword(passwordEncoder.encode(subscriber.getPassword()));
-
+        subscriber.setUnlimitedPlan(false);
         Subscriber saved = subscriberRepository.save(subscriber);
 
         streamBridge.send("event-out", 
@@ -87,10 +86,9 @@ public class SubscriberService {
         Subscriber subscriber = subscriberRepository.findById(subscriberId)
             .orElseThrow(() -> new RuntimeException("회원이 없습니다."));
         
-        int beforePoints = subscriber.getPoint();
-        boolean isUnlimited = subscriber.getUnlimitedPlan();
+        int beforePoints = subscriber.getPoint() != null ? subscriber.getPoint() : 0;
+        boolean isUnlimited = Boolean.TRUE.equals(subscriber.getUnlimitedPlan());
         
-        // 요금제 가입 상태면 포인트 차감 없음
         String pointMessage;
         if (isUnlimited) {
             pointMessage = " (요금제 가입 상태: 포인트 미차감)";

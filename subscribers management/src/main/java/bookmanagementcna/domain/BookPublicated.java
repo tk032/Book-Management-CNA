@@ -1,14 +1,13 @@
 package bookmanagementcna.domain;
 
-import bookmanagementcna.domain.*;
 import bookmanagementcna.infra.AbstractEvent;
-import java.util.*;
-import lombok.*;
+import lombok.Data;
+import lombok.ToString;
+import java.util.Date;
 
 @Data
 @ToString
 public class BookPublicated extends AbstractEvent {
-
     private Long id;
     private Long publicationId;
     private Date publishedDate;
@@ -19,6 +18,8 @@ public class BookPublicated extends AbstractEvent {
     private String summaryText;
     private String coverImageUrl;
     private String message;
-    private String region;       // 지역 정보
-    private String password; 
+    private String region;
+    private String password;
+    private String userEmail;
+    private Long bookId;
 }

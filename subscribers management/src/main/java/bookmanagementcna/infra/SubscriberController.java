@@ -6,6 +6,8 @@ import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.transaction.annotation.Transactional; // 추가
+import org.springframework.security.crypto.password.PasswordEncoder; // 추가
 import javax.validation.Valid;
 
 @RestController
@@ -16,12 +18,15 @@ public class SubscriberController {
     @Autowired
     private SubscriberService subscriberService;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder; // 추가
+
     // 회원가입
     @PostMapping("/register")
     public ResponseEntity<SubscriberResponse> register(@Valid @RequestBody SignupRequest request) {
         Subscriber subscriber = new Subscriber();
         subscriber.setEmail(request.getEmail());
-        subscriber.setPassword(passwordEncoder.encode(request.getPassword())); // 비밀번호 해싱
+        subscriber.setPassword(request.getPassword());
         subscriber.setName(request.getName());
         subscriber.setAddress(request.getAddress());
         subscriber.setJoinStatus(true);
@@ -29,7 +34,6 @@ public class SubscriberController {
 
         Subscriber saved = subscriberService.register(subscriber);
 
-        // 응답에서 password 등 민감 정보 제외
         SubscriberResponse response = new SubscriberResponse(
             saved.getId(),
             saved.getEmail(),
@@ -41,27 +45,18 @@ public class SubscriberController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-    // 로그인 (예시)
+    // 로그인
     @PostMapping("/login")
-    public void login(@RequestBody LoginRequest loginRequest) {
-        subscriberService.login(loginRequest.getEmail(), loginRequest.getPassword());
+    public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
+        try {
+            subscriberService.login(loginRequest.getEmail(), loginRequest.getPassword());
+            return ResponseEntity.ok("로그인 성공");
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
+        }
     }
 
-    // DTO 클래스 (수정됨)
-    public static class LoginRequest {
-        private String email;
-        private String password;
-
-        // 수동 getter 추가
-        public String getEmail() { return email; }
-        public String getPassword() { return password; }
-        
-        // setter도 필요한 경우 추가
-        public void setEmail(String email) { this.email = email; }
-        public void setPassword(String password) { this.password = password; }
-    }
-
-    // 로그아웃 (예시)
+    // 로그아웃
     @PostMapping("/logout")
     public ResponseEntity<?> logout(@RequestBody LogoutRequest request) {
         subscriberService.logout(request.getEmail());
