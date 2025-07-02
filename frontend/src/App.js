@@ -1,36 +1,21 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-
-import MainPage from './pages/MainPage';
-import NewBook from './pages/NewBook';
-import GenerateImage from './pages/GenerateImage';
-import BookListPage from './pages/BookListPage';
-import BookDetailPage from './pages/BookDetailPage';
-import BookEditPage from './pages/BookEditPage';
-import BookSubmitPage from './pages/BookSubmitPage';
-import Header from './components/Header';
-import LoginPage from './pages/LoginPage';
+import NavBar from './components/NavBar';
 import SignupPage from './pages/SignupPage';
+import LoginPage from './pages/LoginPage';
+import DashboardPage from './pages/DashboardPage';
+import MyPage from './pages/MyPage';
 
-
-function App() {
+export default function App() {
   return (
     <Router>
-      <Header/>
+      <NavBar />
       <Routes>
-        <Route path="/" element={<MainPage />} />
-        <Route path="/new-book" element={<NewBook />} />
-        <Route path="/generate-image" element={<GenerateImage />} />
-        <Route path="/books" element={<BookListPage />} />
-        <Route path="/books/:id" element={<BookDetailPage />} />
-        <Route path="/books/:id/edit" element={<BookEditPage />} />
-        <Route path="/write" element={<BookSubmitPage />} />
-        <Route path="/login" element={<LoginPage />} />
         <Route path="/signup" element={<SignupPage />} />
-       </Routes>
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/mypage" element={<MyPage />} />
+        <Route path="/" element={<DashboardPage />} />
+      </Routes>
     </Router>
   );
-  
 }
-
-export default App;

@@ -1,11 +1,17 @@
 import { authApi } from './httpClients';
 
-export const login = async ({ email }) => {
-  const res = await authApi.post('/subscribers/login', {email});
-  return res.data;
-};
+// 회원가입
+export function signup({ email, password, name, region }) {
+  return authApi.post('/api/subscribers/register', { email, password, name, region });
+}
 
-export const signup = async ({ email, name }) => {
-  const res = await authApi.post('/subscribers/register', {email,name});
-  return res.data;
-};
+// 로그인
+export async function login({ email, password }) {
+  const res = await authApi.post('/api/subscribers/login', { email, password });
+  return res.data; // { id: number }
+}
+
+// 로그아웃
+export function logout(email) {
+  return authApi.post('/api/subscribers/logout', { email });
+}

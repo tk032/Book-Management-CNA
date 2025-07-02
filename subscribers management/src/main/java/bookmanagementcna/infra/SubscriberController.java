@@ -6,11 +6,13 @@ import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.transaction.annotation.Transactional; // 추가
 import org.springframework.security.crypto.password.PasswordEncoder; // 추가
 import javax.validation.Valid;
 
 @RestController
+@CrossOrigin(origins = "*")
 @RequestMapping("/api/subscribers")
 @Transactional
 public class SubscriberController {
@@ -21,6 +23,7 @@ public class SubscriberController {
     @Autowired
     private PasswordEncoder passwordEncoder; // 추가
 
+   
     // 회원가입
     @PostMapping("/register")
     public ResponseEntity<SubscriberResponse> register(@Valid @RequestBody SignupRequest request) {

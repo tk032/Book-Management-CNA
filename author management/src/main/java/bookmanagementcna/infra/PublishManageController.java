@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 //<<< Clean Arch / Inbound Adaptor
 
 @RestController
+@CrossOrigin(origins = "*")
 @RequestMapping(value="/publish")
 @Transactional
 public class PublishManageController {

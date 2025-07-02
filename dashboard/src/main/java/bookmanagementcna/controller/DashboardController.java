@@ -17,6 +17,7 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 @RestController
+@CrossOrigin(origins = "*")
 @RequestMapping("/dashboard")
 @RequiredArgsConstructor
 public class DashboardController {
