@@ -71,8 +71,7 @@ public class Admin {
         Admin admin = new Admin();
         admin.setRequestId(event.getId());
         admin.setRequestType("AUTHOR");
-        admin.setEmail(event.getEmail());
-        admin.setStatus("PENDING");
+        admin.setStatus("APPROVED");
         admin.setRequestedAt(new Date());
         repository().save(admin);
 
@@ -86,8 +85,8 @@ public class Admin {
        Admin admin = new Admin();
         admin.setRequestId(event.getId());
         admin.setRequestType("BOOK");
-        admin.setAuthorId(event.getAuthorId());
-        admin.setStatus("PENDING");
+        admin.setTargetId(event.getAuthorId());
+        admin.setStatus("APPROVED");
         admin.setRequestedAt(new Date());
         repository().save(admin);
 
@@ -100,7 +99,7 @@ public class Admin {
         admin.setRequestId(event.getId());
         admin.setRequestType("REPORT");
         admin.setTargetId(event.getTargetId());
-        admin.setStatus("PENDING");
+        admin.setStatus("APPROVED");
         admin.setRequestedAt(new Date());
         repository().save(admin);
 
@@ -125,10 +124,12 @@ public class Admin {
 
     public static void approveLogin(Login login) {
         System.out.println("Login approved for: " + login.getUserId());
+        login.getMessage("admin: LOGIN APPROVED!!!");
     }
 
    public static void approveLogout(Logout logout) {
         System.out.println("Logout approved for: " + logout.getUserId());
+        logout.getMessage("admin: LOGOUT APPROVED!!!");
     }
 
 }

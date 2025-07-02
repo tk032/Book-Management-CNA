@@ -22,4 +22,9 @@ public class Login extends AbstractEvent {
         return id;
     }
 
+    public String getMessage(String s) {
+        message = s;
+        return message;
+    }
+
 }
