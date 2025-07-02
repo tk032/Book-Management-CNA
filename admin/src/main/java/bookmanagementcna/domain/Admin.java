@@ -41,11 +41,11 @@ public class Admin {
  
     @PostPersist
     public void onPostPersist() {
-        if ("REPORT".equals(this.requestType) && "RESOLVED".equals(this.status)) {
+        if ("REPORT".equals(this.requestType)) {
             ReportResolved reportResolved = new ReportResolved(this);
             reportResolved.publishAfterCommit();
         }
-        else if ("BOOK".equals(this.requestType) && "APPROVED".equals(this.status)) {
+        else if ("BOOK".equals(this.requestType)) {
             BookApproved bookApproved = new BookApproved(this);
             bookApproved.publishAfterCommit();
         }
@@ -53,7 +53,7 @@ public class Admin {
  
     @PostUpdate
     public void onPostUpdate() {
-        if ("AUTHOR".equals(this.requestType) && "APPROVED".equals(this.status)) {
+        if ("AUTHOR".equals(this.requestType)) {
             AuthorApproved authorApproved = new AuthorApproved(this);
             authorApproved.publishAfterCommit();
         }
@@ -71,7 +71,7 @@ public class Admin {
         Admin admin = new Admin();
         admin.setRequestId(event.getId());
         admin.setRequestType("AUTHOR");
-        admin.setStatus("PENDING");
+        admin.setStatus("APPROVED");
         admin.setRequestedAt(new Date());
         repository().save(admin);
  
@@ -86,7 +86,7 @@ public class Admin {
         admin.setRequestId(event.getId());
         admin.setRequestType("BOOK");
         admin.setTargetId(event.getAuthorId());
-        admin.setStatus("PENDING");
+        admin.setStatus("APPROVED");
         admin.setRequestedAt(new Date());
         repository().save(admin);
  
@@ -99,7 +99,7 @@ public class Admin {
         admin.setRequestId(event.getId());
         admin.setRequestType("REPORT");
         admin.setTargetId(event.getTargetId());
-        admin.setStatus("PENDING");
+        admin.setStatus("APPROVED");
         admin.setRequestedAt(new Date());
         repository().save(admin);
  
@@ -124,10 +124,12 @@ public class Admin {
  
     public static void approveLogin(Login login) {
         System.out.println("Login approved for: " + login.getUserId());
+        login.getMessage("admin: LOGIN APPROVED!!!");
     }
  
    public static void approveLogout(Logout logout) {
         System.out.println("Logout approved for: " + logout.getUserId());
+        logout.getMessage("admin: LOGOUT APPROVED!!!");
     }
  
 }
