@@ -44,3 +44,6 @@ secrets.yml
 node_modules
 .dist/
 .pem
+kafka_2.13-3.7.2/
+kafka_2.13-3.7.2.tgz
+get_helm.sh

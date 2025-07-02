@@ -23,6 +23,8 @@ public class Subscriber {
     private Boolean joinStatus;
     private Boolean ktCustomer;
     private String loginStatus;
+    private String region;       // 지역 정보
+    private String password;     // 비밀번호
 
     // [추가] 요금제 가입 여부 필드
     private Boolean unlimitedPlan = false; // 기본값: 미가입 상태

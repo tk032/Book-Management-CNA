@@ -16,6 +16,8 @@ public class PointsAdded extends AbstractEvent {
     private String name;
     private Integer point;
     private Boolean ktCustomer;
+    private String region;       // 지역 정보
+    private String password; 
 
     public PointsAdded(Subscriber aggregate) {
         super(aggregate);

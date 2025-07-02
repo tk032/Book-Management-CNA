@@ -25,6 +25,8 @@ public class Login extends AbstractEvent {
     private Boolean joinStatus;
     private Boolean ktCustomer;
     private String loginStatus;
+    private String region;       // 지역 정보
+    private String password; 
 
     public Login(Subscriber aggregate) {
         super(aggregate);

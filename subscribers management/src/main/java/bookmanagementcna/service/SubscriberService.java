@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.stream.function.StreamBridge;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Service
 public class SubscriberService {
@@ -15,35 +16,54 @@ public class SubscriberService {
     @Autowired
     private StreamBridge streamBridge;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;   
+
+
     // 회원가입
     @Transactional
     public Subscriber register(Subscriber subscriber) {
         if (subscriberRepository.findByEmail(subscriber.getEmail()).isPresent()) {
             throw new IllegalArgumentException("이미 사용 중인 이메일입니다: " + subscriber.getEmail());
         }
+
+        // 비밀번호 암호화
+        subscriber.setPassword(passwordEncoder.encode(subscriber.getPassword()));
+
         Subscriber saved = subscriberRepository.save(subscriber);
-        
+
         streamBridge.send("event-out", 
             "회원가입: " + saved.getEmail() + 
             ", 초기 포인트: " + saved.getPoint()
         );
-        
+
         return saved;
     }
 
     // 로그인
     @Transactional
-    public void login(String email) {
+    public void login(String email, String password) {
+        // 1. 회원 존재 확인
         Subscriber subscriber = subscriberRepository.findByEmail(email)
             .orElseThrow(() -> new RuntimeException("존재하지 않는 회원입니다."));
+
+        // 2. 안전한 비밀번호 비교
+        String storedPassword = subscriber.getPassword();
+        if (storedPassword == null || !passwordEncoder.matches(password, storedPassword)) {
+            throw new RuntimeException("이메일 또는 비밀번호가 올바르지 않습니다.");
+        }
+
+        // 3. 로그인 처리
         subscriber.login();
         subscriberRepository.save(subscriber);
-        
-        streamBridge.send("event-out", 
-            "로그인: " + email + 
+
+        streamBridge.send("event-out",
+            "로그인: " + email +
             ", 현재 포인트: " + subscriber.getPoint()
         );
     }
+
+
 
     // 로그아웃
     @Transactional

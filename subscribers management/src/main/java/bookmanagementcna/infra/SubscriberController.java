@@ -6,14 +6,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import javax.transaction.Transactional;
 
-//<<< Clean Arch / Inbound Adaptor
 @RestController
-@RequestMapping("/api/subscribers") // 기본 경로 추가
+@RequestMapping("/api/subscribers")
 @Transactional
 public class SubscriberController {
 
     @Autowired
-    private SubscriberService subscriberService; // 서비스 주입
+    private SubscriberService subscriberService;
 
     // 회원가입
     @PostMapping("/register")
@@ -23,8 +22,22 @@ public class SubscriberController {
 
     // 로그인
     @PostMapping("/login")
-    public void login(@RequestParam String email) {
-        subscriberService.login(email);
+    public void login(@RequestBody LoginRequest loginRequest) {
+        subscriberService.login(loginRequest.getEmail(), loginRequest.getPassword());
+    }
+
+    // DTO 클래스 (수정됨)
+    public static class LoginRequest {
+        private String email;
+        private String password;
+
+        // 수동 getter 추가
+        public String getEmail() { return email; }
+        public String getPassword() { return password; }
+        
+        // setter도 필요한 경우 추가
+        public void setEmail(String email) { this.email = email; }
+        public void setPassword(String password) { this.password = password; }
     }
 
     // 로그아웃
@@ -63,4 +76,3 @@ public class SubscriberController {
         subscriberService.unsubscribeUnlimitedPlan(id);
     }
 }
-//>>> Clean Arch / Inbound Adaptor/
