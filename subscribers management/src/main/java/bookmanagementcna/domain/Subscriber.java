@@ -24,7 +24,8 @@ public class Subscriber {
     private Boolean joinStatus;
     private Boolean ktCustomer;
     private String loginStatus;
-    private Boolean unlimitedPlan = false;
+    private String region;       // 지역 정보
+    private String password;     // 비밀번호
 
     @Transient
     private final List<Object> domainEvents = new ArrayList<>();

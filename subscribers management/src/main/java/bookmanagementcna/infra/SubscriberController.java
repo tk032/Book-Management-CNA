@@ -10,13 +10,11 @@ import javax.validation.Valid;
 
 @RestController
 @RequestMapping("/api/subscribers")
+@Transactional
 public class SubscriberController {
 
     @Autowired
     private SubscriberService subscriberService;
-
-    @Autowired
-    private org.springframework.security.crypto.password.PasswordEncoder passwordEncoder;
 
     // 회원가입
     @PostMapping("/register")
@@ -45,10 +43,22 @@ public class SubscriberController {
 
     // 로그인 (예시)
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginRequest request) {
-        // 실제 로그인 로직은 JWT, 세션 등과 연동 필요
-        subscriberService.login(request.getEmail());
-        return ResponseEntity.ok().build();
+    public void login(@RequestBody LoginRequest loginRequest) {
+        subscriberService.login(loginRequest.getEmail(), loginRequest.getPassword());
+    }
+
+    // DTO 클래스 (수정됨)
+    public static class LoginRequest {
+        private String email;
+        private String password;
+
+        // 수동 getter 추가
+        public String getEmail() { return email; }
+        public String getPassword() { return password; }
+        
+        // setter도 필요한 경우 추가
+        public void setEmail(String email) { this.email = email; }
+        public void setPassword(String password) { this.password = password; }
     }
 
     // 로그아웃 (예시)

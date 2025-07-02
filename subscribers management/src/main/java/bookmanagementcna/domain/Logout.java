@@ -19,6 +19,8 @@ public class Logout extends AbstractEvent {
     private Boolean joinStatus;
     private Boolean ktCustomer;
     private String loginStatus;
+    private String region;       // 지역 정보
+    private String password; 
 
     public Logout(Subscriber aggregate) {
         super(aggregate);
