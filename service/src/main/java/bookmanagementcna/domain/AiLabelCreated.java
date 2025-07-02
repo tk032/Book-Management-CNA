@@ -1,12 +1,9 @@
 package bookmanagementcna.domain;
 
-import bookmanagementcna.domain.*;
 import bookmanagementcna.infra.AbstractEvent;
-import java.time.LocalDate;
 import java.util.*;
 import lombok.*;
 
-//<<< DDD / Domain Event
 @Data
 @ToString
 public class AiLabelCreated extends AbstractEvent {
@@ -16,7 +13,7 @@ public class AiLabelCreated extends AbstractEvent {
     private Date generatedAt;
     private String status;
 
-    public AiLabelCreated(Service aggregate) {
+    public AiLabelCreated(EBookService aggregate) {
         super(aggregate);
     }
 
@@ -24,4 +21,3 @@ public class AiLabelCreated extends AbstractEvent {
         super();
     }
 }
-//>>> DDD / Domain Event

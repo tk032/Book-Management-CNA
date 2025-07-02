@@ -19,10 +19,5 @@ public class ServiceController {
 
     @Autowired
     ServiceRepository serviceRepository;
-
-    public void handle(PublishCommand command) {
-        Service service = serviceRepository.findById(command.getId()).orElseThrow();
-        service.publishRequest(command);
-    } //출간요청, 전자책 요약
 }
 //>>> Clean Arch / Inbound Adaptor

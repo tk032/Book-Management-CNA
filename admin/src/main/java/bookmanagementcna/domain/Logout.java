@@ -21,4 +21,9 @@ public class Logout extends AbstractEvent {
     public Long getUserId() {
         return id;
     }
+
+    public String getMessage(String s) {
+        message = s;
+        return message;
+    }
 }

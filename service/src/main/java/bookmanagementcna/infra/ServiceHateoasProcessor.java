@@ -1,5 +1,6 @@
 package bookmanagementcna.infra;
 
+import bookmanagementcna.domain.EBookService;
 import bookmanagementcna.domain.*;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.Link;

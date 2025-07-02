@@ -3,6 +3,7 @@ package bookmanagementcna.service;
 import bookmanagementcna.domain.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.stream.function.StreamBridge;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -34,7 +35,8 @@ public class SubscriberService {
 
         streamBridge.send("event-out", 
             "회원가입: " + saved.getEmail() + 
-            ", 초기 포인트: " + saved.getPoint()
+            ", 초기 포인트: " + saved.getPoint() +
+            ", 주소: " + saved.getAddress() // 새 필드 반영
         );
 
         return saved;
@@ -108,13 +110,13 @@ public class SubscriberService {
         );
     }
 
-    // 포인트 충전
+    // 포인트 충전 (null-safe 처리)
     @Transactional
     public void addPoints(Long subscriberId, int amount) {
         Subscriber subscriber = subscriberRepository.findById(subscriberId)
             .orElseThrow(() -> new RuntimeException("회원이 없습니다."));
         
-        int beforePoints = subscriber.getPoint();
+        int beforePoints = subscriber.getPoint() != null ? subscriber.getPoint() : 0;
         subscriber.addPoints(amount);
         subscriberRepository.save(subscriber);
         
