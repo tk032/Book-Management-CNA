@@ -12,7 +12,6 @@ import org.springframework.security.crypto.password.PasswordEncoder; // 추가
 import javax.validation.Valid;
 
 @RestController
-@CrossOrigin(origins = "*")
 @RequestMapping("/api/subscribers")
 @Transactional
 public class SubscriberController {
