@@ -14,7 +14,6 @@ import javax.validation.Valid;
 // ... (생략)
 
 @RestController
-@CrossOrigin(origins = "*")
 @RequestMapping("/api/subscribers")
 @Transactional
 public class SubscriberController {
