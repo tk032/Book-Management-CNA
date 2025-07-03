@@ -1,3 +1,4 @@
+// src/pages/SubscriberPage.jsx
 import React, { useEffect, useState } from 'react';
 import { Container, Typography, Box, Button } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
@@ -34,9 +35,9 @@ export default function SubscriberPage() {
         📖 구독자 페이지
       </Typography>
       <Typography variant="subtitle1" color="textSecondary" gutterBottom>
-        ID: <strong>{user.id}</strong><br/>
-        이메일: <strong>{user.email}</strong><br/>
-        이름: <strong>{user.name}</strong><br/>
+        ID: <strong>{user.id}</strong><br />
+        이메일: <strong>{user.email}</strong><br />
+        이름: <strong>{user.name}</strong><br />
         포인트: <strong>{user.point}</strong>
       </Typography>
       <Box sx={{ mt: 4 }}>

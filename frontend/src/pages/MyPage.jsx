@@ -1,63 +1,52 @@
-import React, { useEffect, useState } from 'react';
-import { Container, Typography, Box, Chip, CircularProgress, Alert } from '@mui/material';
-import { getSubscriber } from '../api/subscriberService';
+import React, { useState, useEffect } from 'react';
+import { Container, Typography, Box, CircularProgress } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
+import { getSubscriber } from '../api/api';
 
 export default function MyPage() {
-  const [joinStatus, setJoinStatus] = useState(null);
-  const [point, setPoint] = useState(null);
+  const navigate = useNavigate();
+  const stored = JSON.parse(localStorage.getItem('user'));
+  const [userInfo, setUserInfo] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
 
   useEffect(() => {
-    async function fetchData() {
+    if (!stored) {
+      navigate('/login', { replace: true });
+      return;
+    }
+    (async () => {
       try {
-        const response = await getSubscriber();        // GET /subscribers/1
-        const data = response.data;
-        setJoinStatus(data.joinStatus);
-        setPoint(data.point);
+        const data = await getSubscriber(stored.id);
+        setUserInfo(data);
       } catch (err) {
-        setError('정보 조회에 실패했습니다.');
+        console.error(err);
+        alert('마이페이지 정보를 불러오지 못했습니다.');
       } finally {
         setLoading(false);
       }
-    }
-    fetchData();
-  }, []);
+    })();
+  }, [stored, navigate]);
 
   if (loading) {
     return (
-      <Container sx={{ mt: 4, textAlign: 'center' }}>
+      <Container maxWidth="sm" sx={{ textAlign: 'center', py: 6 }}>
         <CircularProgress />
       </Container>
     );
   }
 
-  if (error) {
-    return (
-      <Container sx={{ mt: 4 }}>
-        <Alert severity="error">{error}</Alert>
-      </Container>
-    );
-  }
-
   return (
-    <Container sx={{ mt: 4 }}>
+    <Container maxWidth="sm" sx={{ py: 6 }}>
       <Typography variant="h4" gutterBottom>
         내 정보
       </Typography>
-
-      <Box sx={{ mb: 2 }}>
-        <Chip
-          label={joinStatus ? '가입됨' : '미가입'}
-          color={joinStatus ? 'success' : 'default'}
-        />
-      </Box>
-
-      <Box>
-        <Typography variant="h6">보유 포인트</Typography>
-        <Typography variant="h3">
-          {point.toLocaleString()} P
-        </Typography>
+      <Box sx={{ mt: 2 }}>
+        <Typography>이메일: {userInfo.email}</Typography>
+        <Typography>이름: {userInfo.name}</Typography>
+        <Typography>주소: {userInfo.address || '정보 없음'}</Typography>
+        <Typography>포인트: {userInfo.point}</Typography>
+        <Typography>회원 상태: {userInfo.joinStatus ? '활성' : '비활성'}</Typography>
+        <Typography>무제한 플랜: {userInfo.unlimitedPlan ? '구독 중' : '미구독'}</Typography>
       </Box>
     </Container>
   );
