@@ -9,11 +9,11 @@ spring:
     gateway:
 #<<< API Gateway / Routes
       routes:
-        - id: author management
+        - id: author-management
           uri: http://localhost:8082
           predicates:
             - Path=/authors/**, /publishManages/**, 
-        - id: subscribers management
+        - id: subscribers-management
           uri: http://localhost:8083
           predicates:
             - Path=/subscribers/**, 
@@ -53,11 +53,11 @@ spring:
   cloud:
     gateway:
       routes:
-        - id: author management
+        - id: author-management
           uri: http://authorManagement:8080
           predicates:
             - Path=/authors/**, /publishManages/**, 
-        - id: subscribers management
+        - id: subscribers-management
           uri: http://subscribersManagement:8080
           predicates:
             - Path=/subscribers/**, 

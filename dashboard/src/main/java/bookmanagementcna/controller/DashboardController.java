@@ -11,6 +11,8 @@ import bookmanagementcna.infra.BestsellerListRepository;
 import bookmanagementcna.infra.SubscriptionListRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
+import org.springframework.http.HttpStatus;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -53,19 +55,16 @@ public class DashboardController {
                 .collect(Collectors.toList());
     }
 
-        @GetMapping("/subscribers")
-        public List<SubscriptionDto> getAllSubscribers() {
-        return StreamSupport.stream(subscriptionListRepository.findAll().spliterator(), false)
-                .map(sub -> new SubscriptionDto(
-                        sub.getId(),
-                        sub.getName(),
-                        sub.getJoinStatus(),
-                        sub.getPoint()))
-                .collect(Collectors.toList());
-        }
+        @GetMapping("/subscribers/{id}")
+        public SubscriptionDto getSubscriberById(@PathVariable Long id) {
+        SubscriptionList sub = subscriptionListRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(
+                HttpStatus.NOT_FOUND, "구독자를 찾을 수 없습니다: ID = " + id));
 
-        @GetMapping("/debug/books/raw")
-        public Iterable<BookList> getRawBooks() {
-        return bookListRepository.findAll();
+        return new SubscriptionDto(
+                sub.getId(),
+                sub.getName(),
+                sub.getJoinStatus(),
+                sub.getPoint());
         }
 }
