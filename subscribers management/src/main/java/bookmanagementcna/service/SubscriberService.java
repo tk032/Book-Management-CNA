@@ -30,6 +30,7 @@ public class SubscriberService {
         // 비밀번호 암호화
         subscriber.setPassword(passwordEncoder.encode(subscriber.getPassword()));
         subscriber.setUnlimitedPlan(false);
+        subscriber.setKtCustomer(false); //회원가입시 kt 인증 기본값
         Subscriber saved = subscriberRepository.save(subscriber);
 
         streamBridge.send("event-out", 
@@ -160,5 +161,21 @@ public class SubscriberService {
             " (변경 전: " + beforeStatus + ")" +
             ", 남은 포인트: " + subscriber.getPoint()
         );
+    }
+
+    // kt 인증
+    @Transactional
+    public void authenticateKtCustomer(Long id) {
+        Subscriber subscriber = subscriberRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("회원이 없습니다."));
+
+        if (Boolean.TRUE.equals(subscriber.getKtCustomer())) {
+            throw new IllegalStateException("이미 KT 고객 인증 및 포인트 지급이 완료되었습니다.");
+        }
+
+        // 인증 및 포인트 지급
+        subscriber.setKtCustomer(true);
+        subscriber.setPoint(subscriber.getPoint() + 2000); // 예시: 2000점 지급
+        subscriberRepository.save(subscriber);
     }
 }

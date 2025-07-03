@@ -14,7 +14,8 @@ public class BookInfoSended extends AbstractEvent {
     private String title;
     private String summaryText;
     private String coverImageUrl;
-    private String region;
+    private String address;
+    private Boolean ktCustomer;
     private String password;
     private List<String> recipientEmails; 
     private Long bookId;

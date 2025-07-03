@@ -100,6 +100,17 @@ public class SubscriberController {
         return ResponseEntity.ok().build();
     }
 
+    //kt 고객 여부
+    @PostMapping("/{id}/ktauth")
+    public ResponseEntity<?> authenticateKtCustomer(@PathVariable Long id) {
+        try {
+            subscriberService.authenticateKtCustomer(id);
+            return ResponseEntity.ok("KT 고객 인증 및 포인트 지급 완료");
+        } catch (IllegalStateException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
     // --- DTO 클래스들 ---
     @Data
     public static class SignupRequest {

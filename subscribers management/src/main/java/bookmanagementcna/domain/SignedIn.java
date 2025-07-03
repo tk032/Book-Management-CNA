@@ -18,7 +18,7 @@ public class SignedIn extends AbstractEvent {
     private Integer point;
     private Boolean joinStatus;
     private Boolean ktCustomer;
-    private String region;       // 지역 정보
+    private String address;
     private String password; 
 
     public SignedIn(Subscriber aggregate) {

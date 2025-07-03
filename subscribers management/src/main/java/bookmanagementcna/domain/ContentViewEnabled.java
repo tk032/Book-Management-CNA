@@ -18,7 +18,8 @@ public class ContentViewEnabled extends AbstractEvent {
     private final String email;
     private final String name;
     private final Boolean joinStatus;
-    private String region;       // 지역 정보
+    private String address;
+    private Boolean ktCustomer;
     private String password; 
     
     public ContentViewEnabled(Subscriber aggregate) {
