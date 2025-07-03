@@ -44,12 +44,28 @@ public class SubscriptionListViewHandler {
     ) {
         try {
             if (!contentViewEnabled.validate()) return;
-            // view 객체 조회
+
+            // 1. 해당 뷰 객체 존재 여부 확인
+            Optional<SubscriptionList> optional = subscriptionListRepository.findById(contentViewEnabled.getId());
+
+            if (optional.isPresent()) {
+                // 업데이트
+                SubscriptionList subscriber = optional.get();
+                subscriber.setName(contentViewEnabled.getName());
+                subscriber.setJoinStatus(contentViewEnabled.getJoinStatus());
+                //subscriber.setPoint(contentViewEnabled.getPoint());
+                subscriptionListRepository.save(subscriber);
+
+            } else {
+                // 없으면 예외 또는 로그 출력만 (생성 X)
+                System.err.println("[ContentViewEnabled 처리 실패] 해당 ID의 SubscriptionList가 존재하지 않음: ID = " + contentViewEnabled.getId());
+                // 또는 예외 던져서 롤백 처리하고 싶다면:
+                
+            }
 
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
-    
     //>>> DDD / CQRS
 }

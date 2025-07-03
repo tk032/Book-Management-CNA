@@ -2,6 +2,7 @@ package bookmanagementcna.domain;
 
 import bookmanagementcna.infra.AbstractEvent;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.ToString;
 
 /**
@@ -11,13 +12,14 @@ import lombok.ToString;
 
 //<<< DDD / Domain Event
 @Getter
+@Setter
 @ToString
 public class ContentViewEnabled extends AbstractEvent {
 
     private final Long id;
     private final String email;
     private final String name;
-    private final Boolean joinStatus;
+    private Boolean joinStatus;
     private String address;
     private Boolean ktCustomer;
     private String password; 

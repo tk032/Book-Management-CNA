@@ -74,10 +74,8 @@ public class SubscriberService {
 
         // Kafka로 JSON 전송
         streamBridge.send("event-out", loginEvent);
-    }
 
-
-        return subscriber; // 로그인 성공한 회원 객체 반환!
+        return subscriber;
     }
 
 
@@ -149,14 +147,13 @@ public class SubscriberService {
         
         boolean beforeStatus = subscriber.getUnlimitedPlan();
         subscriber.subscribeUnlimitedPlan();
+        subscriber.setJoinStatus(true);       //요금제 가입 시 true로 설정
         subscriberRepository.save(subscriber);
-        
-        streamBridge.send("event-out", 
-            "요금제 가입: 회원ID " + subscriberId + 
-            ", 현재 상태: " + subscriber.getUnlimitedPlan() +
-            " (변경 전: " + beforeStatus + ")" +
-            ", 남은 포인트: " + subscriber.getPoint()
-        );
+
+        // ContentViewEnabled 이벤트 발행
+        ContentViewEnabled event = new ContentViewEnabled(subscriber);
+        //event.setJoinStatus(subscriber.getJoinStatus());
+        streamBridge.send("event-out", event);
     }
 
     // 요금제 해지
@@ -167,14 +164,14 @@ public class SubscriberService {
         
         boolean beforeStatus = subscriber.getUnlimitedPlan();
         subscriber.unsubscribeUnlimitedPlan();
+        subscriber.setJoinStatus(false);       //요금제 해제 시 false로 설정
         subscriberRepository.save(subscriber);
+
+        // ContentViewEnabled 이벤트 발행
+        ContentViewEnabled event = new ContentViewEnabled(subscriber);
         
-        streamBridge.send("event-out", 
-            "요금제 해지: 회원ID " + subscriberId + 
-            ", 현재 상태: " + subscriber.getUnlimitedPlan() +
-            " (변경 전: " + beforeStatus + ")" +
-            ", 남은 포인트: " + subscriber.getPoint()
-        );
+        //event.setJoinStatus(subscriber.getJoinStatus());
+        streamBridge.send("event-out", event);
     }
 
     // kt 인증
