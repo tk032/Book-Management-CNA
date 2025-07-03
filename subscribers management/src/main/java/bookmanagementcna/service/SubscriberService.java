@@ -44,7 +44,7 @@ public class SubscriberService {
 
     // 로그인
     @Transactional
-    public void login(String email, String password) {
+    public Subscriber login(String email, String password) { // 반환 타입 변경!
         // 1. 회원 존재 확인
         Subscriber subscriber = subscriberRepository.findByEmail(email)
             .orElseThrow(() -> new RuntimeException("존재하지 않는 회원입니다."));
@@ -76,6 +76,9 @@ public class SubscriberService {
         streamBridge.send("event-out", loginEvent);
     }
 
+
+        return subscriber; // 로그인 성공한 회원 객체 반환!
+    }
 
 
     // 로그아웃
