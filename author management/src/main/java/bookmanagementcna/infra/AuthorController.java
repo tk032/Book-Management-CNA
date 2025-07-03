@@ -11,7 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 //<<< Clean Arch / Inbound Adaptor
 
 @RestController
@@ -45,6 +46,7 @@ public class AuthorController {
 
 
     @PostMapping("/authors")
+    @ResponseStatus(HttpStatus.CREATED)
     public Author registerAuthor(@RequestBody Author author) {
         author.setRegisterStatus("요청됨"); // 초기 상태 설정
         return authorRepository.save(author); // 저장 + @PostPersist에서 이벤트 발행됨
