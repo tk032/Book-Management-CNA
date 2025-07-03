@@ -11,6 +11,8 @@ import org.springframework.transaction.annotation.Transactional; // 추가
 import org.springframework.security.crypto.password.PasswordEncoder; // 추가
 import javax.validation.Valid;
 
+// ... (생략)
+
 @RestController
 @CrossOrigin(origins = "*")
 @RequestMapping("/api/subscribers")
@@ -21,9 +23,8 @@ public class SubscriberController {
     private SubscriberService subscriberService;
 
     @Autowired
-    private PasswordEncoder passwordEncoder; // 추가
+    private PasswordEncoder passwordEncoder;
 
-   
     // 회원가입
     @PostMapping("/register")
     public ResponseEntity<SubscriberResponse> register(@Valid @RequestBody SignupRequest request) {
@@ -33,7 +34,7 @@ public class SubscriberController {
         subscriber.setName(request.getName());
         subscriber.setAddress(request.getAddress());
         subscriber.setJoinStatus(true);
-        subscriber.setPoint(1000); // 가입 포인트 지급
+        subscriber.setPoint(1000);
 
         Subscriber saved = subscriberService.register(subscriber);
 
@@ -52,8 +53,20 @@ public class SubscriberController {
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
         try {
-            subscriberService.login(loginRequest.getEmail(), loginRequest.getPassword());
-            return ResponseEntity.ok("로그인 성공");
+            // 로그인 성공 시 Subscriber 반환하도록 서비스 수정 필요
+            Subscriber subscriber = subscriberService.login(
+                loginRequest.getEmail(),
+                loginRequest.getPassword()
+            ); // 수정
+
+            LoginResponse response = new LoginResponse( // 추가
+                "로그인 성공",                        // 추가
+                subscriber.getId(),                  // 추가
+                subscriber.getEmail(),               // 추가
+                subscriber.getName()                 // 추가
+            );                                       // 추가
+            return ResponseEntity.ok(response);      // 수정
+
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
         }
@@ -149,4 +162,20 @@ public class SubscriberController {
             this.joinStatus = joinStatus;
         }
     }
+
+    // 아래 LoginResponse DTO 추가 // 추가
+    @Data
+    public static class LoginResponse { // 추가
+        private String message;         // 추가
+        private Long id;                // 추가
+        private String email;           // 추가
+        private String name;            // 추가
+
+        public LoginResponse(String message, Long id, String email, String name) { // 추가
+            this.message = message;     // 추가
+            this.id = id;               // 추가
+            this.email = email;         // 추가
+            this.name = name;           // 추가
+        }                               // 추가
+    }                                   // 추가
 }
