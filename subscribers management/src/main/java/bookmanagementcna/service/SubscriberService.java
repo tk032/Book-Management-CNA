@@ -75,7 +75,7 @@ public class SubscriberService {
 
         // Kafka로 JSON 전송
         streamBridge.send("event-out", loginEvent);
-    }
+    
 
 
         return subscriber; // 로그인 성공한 회원 객체 반환!

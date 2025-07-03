@@ -18,4 +18,9 @@ export const addPoints = async (userId, amount) => {
   return res.data;
 };
 
+export const getSubscriber = async (userId) => {
+  const res = await api.get(`/subscribers/${userId}`);
+  return res.data;
+};
+
 export default api;
