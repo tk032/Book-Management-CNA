@@ -59,10 +59,23 @@ public class SubscriberService {
         subscriber.login();
         subscriberRepository.save(subscriber);
 
-        streamBridge.send("event-out",
-            "로그인: " + email +
-            ", 현재 포인트: " + subscriber.getPoint()
-        );
+        // Login 이벤트 객체 생성
+        bookmanagementcna.domain.Login loginEvent = new bookmanagementcna.domain.Login();
+        loginEvent.setId(subscriber.getId());
+        loginEvent.setEmail(subscriber.getEmail());
+        loginEvent.setName(subscriber.getName());
+        loginEvent.setMessage("로그인 성공");
+        loginEvent.setPoint(subscriber.getPoint());
+        loginEvent.setJoinStatus(subscriber.getJoinStatus());
+        loginEvent.setKtCustomer(subscriber.getKtCustomer());
+        loginEvent.setLoginStatus("ACTIVE");
+        // loginEvent.setPassword(null); // 민감 정보는 보내지 않도록
+        // loginEvent.setRegion(null);   // 필요 시 설정
+
+        // Kafka로 JSON 전송
+        streamBridge.send("event-out", loginEvent);
+    }
+
 
         return subscriber; // 로그인 성공한 회원 객체 반환!
     }
