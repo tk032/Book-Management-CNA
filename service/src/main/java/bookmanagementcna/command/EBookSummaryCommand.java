@@ -1,11 +1,11 @@
 package bookmanagementcna.domain;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.*;
 
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 public class EBookSummaryCommand {
     private Long bookId;
-    private String content;  // bookContent 에서 content 로 변경
+    private String content;
 }

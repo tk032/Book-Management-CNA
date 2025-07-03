@@ -1,6 +1,6 @@
 package bookmanagementcna.domain;
 
-import bookmanagementcna.domain.*;
+import bookmanagementcna.domain.ReportResolved;
 import bookmanagementcna.infra.AbstractEvent;
 import java.util.*;
 import lombok.*;
