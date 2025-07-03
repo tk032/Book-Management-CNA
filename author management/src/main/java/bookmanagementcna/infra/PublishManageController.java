@@ -29,7 +29,7 @@ public class PublishManageController {
         return publishManageRepository.save(publishManage); // SaveCompleted & PublishRequestRegistered 이벤트 발행
     }
 
-    @PatchMapping("/publishes/{id}/approve")
+    @PatchMapping("/publishes/{id}")
     public void approvePublish(@PathVariable Long id) {
         PublishManage publishManage = publishManageRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("출판 요청이 존재하지 않습니다."));
