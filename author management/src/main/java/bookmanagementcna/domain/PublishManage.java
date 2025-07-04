@@ -47,6 +47,15 @@ public class PublishManage {
         publishRequestRegistered.publishAfterCommit();
     }
 
+     // ✅ 추가된 부분
+    public void requestPublication() {
+        this.publishStatus = "REQUESTED";  // 또는 "요청"
+    }
+
+    public void approve() {
+        this.publishStatus = "APPROVED";   // 또는 "승인됨"
+    }
+
     public static PublishManageRepository repository() {
         PublishManageRepository publishManageRepository =
             AuthorManagementApplication.applicationContext.getBean(PublishManageRepository.class);
@@ -74,3 +83,5 @@ public class PublishManage {
 
 }
 //>>> DDD / Aggregate Root
+
+
