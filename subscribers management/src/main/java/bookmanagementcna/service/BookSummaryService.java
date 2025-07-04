@@ -17,14 +17,15 @@ public class BookSummaryService {
     private final OpenAiClient openAiClient;
     private final SubscriberEventPublisher eventPublisher;
 
-    public void requestBookSummary(BookSummaryRequested request) {
-        String summary = openAiClient.generateSummary(request.getBookContent());
+    public String requestBookSummary(BookSummaryRequested request) {
+       String summary = openAiClient.generateSummary(request.getBookContent());
 
-        BookSummaryCompleted event = new BookSummaryCompleted();
+       BookSummaryCompleted event = new BookSummaryCompleted();
         event.setSubscriberId(request.getSubscriberId());
         event.setBookTitle(request.getBookTitle());
         event.setSummary(summary);
 
-        eventPublisher.publish(event); // Kafka 또는 EventBus
-    }
+        eventPublisher.publish(event); // Kafka 등으로 전송
+        return summary; // 요약 결과 반환
+}
 }
