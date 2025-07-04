@@ -5,6 +5,10 @@ import org.springframework.stereotype.Service;
 import bookmanagementcna.domain.BookSummaryCompleted;
 import bookmanagementcna.domain.BookSummaryRequested;
 import lombok.RequiredArgsConstructor;
+import bookmanagementcna.service.SubscriberEventPublisher;
+
+
+
 
 @Service
 @RequiredArgsConstructor
