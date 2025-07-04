@@ -3,6 +3,7 @@ package bookmanagementcna.infra;
 import bookmanagementcna.config.kafka.KafkaProcessor;
 import bookmanagementcna.domain.*;
 import java.io.IOException;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,9 +35,7 @@ public class BestsellerListViewHandler {
                 bestsellerIdentified.getSummaryText()
             );
             bestsellerList.setCoverUrl(bestsellerIdentified.getCoverImageUrl());
-            bestsellerList.setPublishedDate(
-                String.valueOf(bestsellerIdentified.getPublishedDate())
-            );
+            bestsellerList.setPublishedDate(bestsellerIdentified.getPublishedDate());
             // view 레파지 토리에 save
             bestsellerListRepository.save(bestsellerList);
         } catch (Exception e) {
