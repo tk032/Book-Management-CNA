@@ -20,5 +20,5 @@ public class BestsellerList {
     private String author;
     private String contentSummary;
     private String coverUrl;
-    private String publishedDate;
+    private Date publishedDate;
 }
