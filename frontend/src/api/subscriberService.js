@@ -1,28 +1,57 @@
 import { authApi } from './httpClients';
 
-// 모든 요청에서 하드코딩된 "1" 사용
+/**
+ * 저장된 subscriberId를 꺼내고,
+ * 없으면 에러를 던집니다.
+ */
+function getSubscriberId() {
+  const id = localStorage.getItem('subscriberId');
+  if (!id) {
+    throw new Error('로그인 또는 가입이 필요합니다.');
+  }
+  return id;
+}
 
-// 상태 조회
+// 회원 상세 조회
 export function getSubscriber() {
-  return authApi.get('/subscribers/1');
+  const id = getSubscriberId();
+  return authApi.get(`/api/subscribers/${id}`);
 }
 
-// 포인트 충전
+// 포인트 충전 (amount는 쿼리 파라미터)
 export function addPoints(amount) {
-  return authApi.post('/subscribers/1/addPoints', { amount });
+  const id = getSubscriberId();
+  return authApi.post(
+    `/api/subscribers/${id}/addPoints`,
+    null,
+    { params: { amount } }
+  );
 }
 
-// 책 열람
+// 책 열람 (point는 쿼리 파라미터)
 export function readContent(point) {
-  return authApi.post('/subscribers/1/readContent', { point });
+  const id = getSubscriberId();
+  return authApi.post(
+    `/api/subscribers/${id}/readContent`,
+    null,
+    { params: { point } }
+  );
 }
 
-// 요금제 가입
+// 무제한 요금제 가입
 export function subscribePlan() {
-  return authApi.post('/subscribers/1/subscribe');
+  const id = getSubscriberId();
+  return authApi.post(`/api/subscribers/${id}/subscribe`);
 }
 
-// 요금제 해지
+// 무제한 요금제 해지
 export function unsubscribePlan() {
-  return authApi.post('/subscribers/1/unsubscribe');
+  const id = getSubscriberId();
+  return authApi.post(`/api/subscribers/${id}/unsubscribe`);
+}
+
+// KT 인증
+export function ktAuth() {
+  const id = getSubscriberId();
+  return authApi.post(`/api/subscribers/${id}/ktauth`);
 }

@@ -11,10 +11,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.stream.annotation.StreamListener;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 //<<< Clean Arch / Inbound Adaptor
+@CrossOrigin(origins = "*")
 @Service
 @Transactional
 public class PolicyHandler {

@@ -1,48 +1,27 @@
-import SimpleBookCard from '../components/SimpleBookCard';
-import { Container, Typography, Grid, Box } from '@mui/material';
-import { useEffect, useState } from 'react';
-import { fetchBooks } from '../api/bookservice';
-import sampleCover from "../img/SampleCover.png";
+// src/pages/MainPage.jsx
+import React from 'react';
+import { Container, Typography, Button, Box } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 
-function MainPage() {
-  const [books, setBooks] = useState([]);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetchBooks();
-        if (Array.isArray(response)) {
-          setBooks(response.slice(0, 3));
-        }
-      } catch (error) {
-        console.error('도서 불러오기 실패:', error);
-      }
-    };
-    fetchData();
-  }, []);
+export default function MainPage() {
+  const navigate = useNavigate();
 
   return (
-    <div>
-      <Container maxWidth="lg" sx={{ py: 5 }}>
-        <Box textAlign="center" mb={4}>
-          <Typography variant="h4" fontWeight="bold">
-            이달의 책 👑
-          </Typography>
-        </Box>
-        <Grid container spacing={4} justifyContent="center">
-          {books.map((book) => (
-            <Grid item key={book.id}>
-              <SimpleBookCard
-                id={book.id}
-                title={book.title}
-                imageUrl={book.coverImageUrl || sampleCover}
-              />
-            </Grid>
-          ))}
-        </Grid>
-      </Container>
-    </div>
+    <Container maxWidth="sm" sx={{ textAlign: 'center', py: 6 }}>
+      <Typography variant="h3" gutterBottom>
+        메뉴를 선택해주세요
+      </Typography>
+      <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2, mt: 4 }}>
+        <Button variant="contained" onClick={() => navigate('/reader')}>
+          독자 메뉴
+        </Button>
+        <Button variant="contained" onClick={() => navigate('/author')}>
+          작가 메뉴
+        </Button>
+        <Button variant="contained" onClick={() => navigate('/admin')}>
+          관리자 메뉴
+        </Button>
+      </Box>
+    </Container>
   );
 }
-
-export default MainPage;

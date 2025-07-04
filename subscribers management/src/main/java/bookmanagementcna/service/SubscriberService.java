@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+
 @Service
 public class SubscriberService {
 
@@ -74,7 +75,6 @@ public class SubscriberService {
 
         // Kafka로 JSON 전송
         streamBridge.send("event-out", loginEvent);
-
         return subscriber;
     }
 
