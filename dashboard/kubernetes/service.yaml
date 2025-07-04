@@ -1,12 +1,12 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: 대시보드
+  name: dashboard
   labels:
-    app: 대시보드
+    app: dashboard
 spec:
   ports:
     - port: 8080
       targetPort: 8080
   selector:
-    app: 대시보드
+    app: dashboard

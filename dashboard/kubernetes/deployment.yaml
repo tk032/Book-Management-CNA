@@ -1,22 +1,22 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: 대시보드
+  name: dashboard
   labels:
-    app: 대시보드
+    app: dashboard
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: 대시보드
+      app: dashboard
   template:
     metadata:
       labels:
-        app: 대시보드
+        app: dashboard
     spec:
       containers:
-        - name: 대시보드
-          image: "username/대시보드:latest"
+        - name: dashboard
+          image: project13.azurecr.io/dashboard:final
           ports:
             - containerPort: 8080
           readinessProbe:
