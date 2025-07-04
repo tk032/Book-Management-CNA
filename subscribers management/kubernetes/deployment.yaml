@@ -1,22 +1,22 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: subscribers management
+  name: subscribers-management
   labels:
-    app: subscribers management
+    app: subscribers-management
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: subscribers management
+      app: subscribers-management
   template:
     metadata:
       labels:
-        app: subscribers management
+        app: subscribers-management
     spec:
       containers:
-        - name: subscribers management
-          image: "username/subscribers management:latest"
+        - name: subscribers-management
+          image: project13.azurecr.io/subscribers-management:final
           ports:
             - containerPort: 8080
           readinessProbe:
