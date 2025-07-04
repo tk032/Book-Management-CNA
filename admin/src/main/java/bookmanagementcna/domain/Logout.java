@@ -17,4 +17,22 @@ public class Logout extends AbstractEvent {
     private Boolean joinStatus;
     private Boolean ktCustomer;
     private String loginStatus;
+
+    public Logout(Admin aggregate) {
+        super(aggregate);
+        this.id = aggregate.getId();
+    }
+
+    public Logout() {
+        super();
+    }
+
+    public Long getUserId() {
+        return this.id;
+    }
+
+    public String getMessage(String msg) {
+        message = msg;
+        return message;
+    }
 }

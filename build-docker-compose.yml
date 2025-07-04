@@ -8,7 +8,7 @@ services:
     ports:
       - 2181:2181
   kafka:
-    image: confluentinc/cp-kafka:latest
+    image: confluentinc/cp-kafka:7.2.1
     container_name: my-kafka
     depends_on:
       - zookeeper
@@ -79,7 +79,11 @@ services:
       - ./admin:/usr/src
       - ./maven-repo:/root/.m2
       
+<<<<<<< HEAD
+  dashboard:
+=======
   대시보드:
+>>>>>>> 095c5db1600412671eb330388e095fbf60263f0a
     depends_on: 
       - kafka
     image: adoptopenjdk/maven-openjdk11:latest
@@ -90,6 +94,10 @@ services:
       - 8086:8086
     working_dir: /usr/src
     volumes:
+<<<<<<< HEAD
+      - ./dashboard:/usr/src
+=======
       - ./대시보드:/usr/src
+>>>>>>> 095c5db1600412671eb330388e095fbf60263f0a
       - ./maven-repo:/root/.m2
       

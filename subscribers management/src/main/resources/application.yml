@@ -7,6 +7,16 @@ spring:
 ---
 
 spring:
+
+  mvc:
+    cors:
+      mappings:
+        "/*":
+          allowed-origins: "*"
+          allowed-methods: "GET,POST,PUT,DELETE,OPTIONS"
+          allowed-headers: "*"
+          allow-credentials: true
+
   profiles: default
   jpa:
     properties:

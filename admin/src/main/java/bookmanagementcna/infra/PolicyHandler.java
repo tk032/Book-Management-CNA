@@ -2,17 +2,12 @@ package bookmanagementcna.infra;
 
 import bookmanagementcna.config.kafka.KafkaProcessor;
 import bookmanagementcna.domain.*;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import javax.naming.NameParser;
-import javax.naming.NameParser;
 import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.stream.annotation.StreamListener;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Service;
 
-//<<< Clean Arch / Inbound Adaptor
 @Service
 @Transactional
 public class PolicyHandler {
@@ -27,70 +22,53 @@ public class PolicyHandler {
         value = KafkaProcessor.INPUT,
         condition = "headers['type']=='RegistrationRequested'"
     )
-    public void wheneverRegistrationRequested_RequestRegister(
-        @Payload RegistrationRequested registrationRequested
-    ) {
-        RegistrationRequested event = registrationRequested;
-        System.out.println(
-            "\n\n##### listener RequestRegister : " +
-            registrationRequested +
-            "\n\n"
-        );
+    public void wheneverRegistrationRequested(@Payload RegistrationRequested event) {
+        System.out.println("\n##### listener RequestRegister : " + event + "\n");
 
-        // Comments //
-        //requestId에서 작가 등록인지 출판 등록인지 구분 필요
+        Admin admin = new Admin();
+        admin.setRequestId(event.getId());
+        admin.setRequestType("AUTHOR");
+        admin.setStatus("APPROVED");
+        admin.setRequestedAt(new java.util.Date());
 
-        // Sample Logic //
-        Admin.requestRegister(event);
-    }
-
-    @StreamListener(
-        value = KafkaProcessor.INPUT,
-        condition = "headers['type']=='PublishRequestRegistered'"
-    )
-    public void wheneverPublishRequestRegistered_RequestRegister(
-        @Payload PublishRequestRegistered publishRequestRegistered
-    ) {
-        PublishRequestRegistered event = publishRequestRegistered;
-        System.out.println(
-            "\n\n##### listener RequestRegister : " +
-            publishRequestRegistered +
-            "\n\n"
-        );
-
-        // Comments //
-        //requestId에서 작가 등록인지 출판 등록인지 구분 필요
-
-        // Sample Logic //
-        Admin.requestRegister(event);
+        adminRepository.save(admin);
+        admin.approveAuthor();
     }
 
     @StreamListener(
         value = KafkaProcessor.INPUT,
         condition = "headers['type']=='Login'"
     )
-    public void wheneverLogin_ApproveLogin(@Payload Login login) {
-        Login event = login;
-        System.out.println(
-            "\n\n##### listener ApproveLogin : " + login + "\n\n"
-        );
+    public void wheneverLoginEvent(@Payload Login event) {
+        System.out.println("\n##### listener LoginEvent : " + event + "\n");
 
-        // Sample Logic //
-        Admin.approveLogin(event);
+        Admin admin = new Admin();
+        admin.setRequestId(event.getId());
+        admin.setRequestType("LOGIN");
+        admin.setStatus("APPROVED");
+        admin.setRequestedAt(new java.util.Date());
+
+        adminRepository.save(admin);
+
+        admin.approveLogin();
+        // 별도로 Login 이벤트 발행 원하면 추가 가능
     }
 
     @StreamListener(
         value = KafkaProcessor.INPUT,
         condition = "headers['type']=='Logout'"
     )
-    public void wheneverLogout_ApproveLogout(@Payload Logout logout) {
-        Logout event = logout;
-        System.out.println(
-            "\n\n##### listener ApproveLogout : " + logout + "\n\n"
-        );
+    public void wheneverLogoutEvent(@Payload Logout event) {
+        System.out.println("\n##### listener LogoutEvent : " + event + "\n");
 
-        // Sample Logic //
-        Admin.approveLogout(event);
+        Admin admin = new Admin();
+        admin.setRequestId(event.getId());
+        admin.setRequestType("LOGOUT");
+        admin.setStatus("APPROVED");
+        admin.setRequestedAt(new java.util.Date());
+
+        adminRepository.save(admin);
+
+        admin.approveLogout();
     }
 }
-//>>> Clean Arch / Inbound Adaptor

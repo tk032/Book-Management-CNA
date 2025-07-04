@@ -9,11 +9,11 @@ spring:
     gateway:
 #<<< API Gateway / Routes
       routes:
-        - id: author management
+        - id: author-management
           uri: http://localhost:8082
           predicates:
             - Path=/authors/**, /publishManages/**, 
-        - id: subscribers management
+        - id: subscribers-management
           uri: http://localhost:8083
           predicates:
             - Path=/subscribers/**, 
@@ -25,10 +25,10 @@ spring:
           uri: http://localhost:8085
           predicates:
             - Path=/admins/**, 
-        - id: 대시보드
+        - id: dashboard
           uri: http://localhost:8086
           predicates:
-            - Path=, /bookLists/**, /구독상태조회/**, /bestsellerLists/**
+            - Path=/dashboard/**, /bookLists/**, /subscriptionLists/**, /bestsellerLists/**
         - id: frontend
           uri: http://localhost:8080
           predicates:
@@ -53,11 +53,11 @@ spring:
   cloud:
     gateway:
       routes:
-        - id: author management
+        - id: author-management
           uri: http://authorManagement:8080
           predicates:
             - Path=/authors/**, /publishManages/**, 
-        - id: subscribers management
+        - id: subscribers-management
           uri: http://subscribersManagement:8080
           predicates:
             - Path=/subscribers/**, 
@@ -69,8 +69,8 @@ spring:
           uri: http://admin:8080
           predicates:
             - Path=/admins/**, 
-        - id: 대시보드
-          uri: http://대시보드:8080
+        - id: dashboard
+          uri: http://dashboard:8080
           predicates:
             - Path=, 
         - id: frontend

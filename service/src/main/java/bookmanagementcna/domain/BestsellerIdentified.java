@@ -1,12 +1,10 @@
 package bookmanagementcna.domain;
 
-import bookmanagementcna.domain.*;
+import bookmanagementcna.domain.BestsellerIdentified;
 import bookmanagementcna.infra.AbstractEvent;
-import java.time.LocalDate;
 import java.util.*;
 import lombok.*;
 
-//<<< DDD / Domain Event
 @Data
 @ToString
 public class BestsellerIdentified extends AbstractEvent {
@@ -26,7 +24,7 @@ public class BestsellerIdentified extends AbstractEvent {
     private Date publishedDate;
     private String authorName;
 
-    public BestsellerIdentified(Service aggregate) {
+    public BestsellerIdentified(EBookService aggregate) {
         super(aggregate);
     }
 
@@ -34,4 +32,3 @@ public class BestsellerIdentified extends AbstractEvent {
         super();
     }
 }
-//>>> DDD / Domain Event

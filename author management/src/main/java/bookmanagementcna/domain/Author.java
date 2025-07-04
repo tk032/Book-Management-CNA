@@ -52,9 +52,16 @@ public class Author {
             .ifPresent(author -> {
                 author.setRegisterStatus("승인됨"); // 승인 상태로 변경
                 repository().save(author); // DB에 저장
+
+                //이벤트 생성 및 발행
+                AuthorApproved event = new AuthorApproved(author);
+                event.setAdminId(authorApproved.getAdminId());
+                event.setApprovedAt(authorApproved.getApprovedAt());
+                event.setMessage(authorApproved.getMessage());
+
+                event.publishAfterCommit();
             });
     }
-    //>>> Clean Arch / Port Method
 
 }
 //>>> DDD / Aggregate Root

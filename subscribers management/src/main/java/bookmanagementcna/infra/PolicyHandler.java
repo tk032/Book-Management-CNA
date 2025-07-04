@@ -11,11 +11,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.stream.annotation.StreamListener;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 //<<< Clean Arch / Inbound Adaptor
+@CrossOrigin(origins = "*")
 @Service
 @Transactional
 public class PolicyHandler {
+
+    private static final Logger logger = LoggerFactory.getLogger(PolicyHandler.class);
 
     @Autowired
     SubscriberRepository subscriberRepository;
@@ -28,17 +34,21 @@ public class PolicyHandler {
         condition = "headers['type']=='BookPublicated'"
     )
     public void wheneverBookPublicated_UpdateFeedWhenBookInfoTransferred(
-        @Payload BookPublicated bookPublicated
+        @Payload BookPublicated event
     ) {
-        BookPublicated event = bookPublicated;
-        System.out.println(
-            "\n\n##### listener UpdateFeedWhenBookInfoTransferred : " +
-            bookPublicated +
-            "\n\n"
-        );
+        logger.info("##### listener: BookPublicated {}", event);
 
-        // Sample Logic //
-        Subscriber.updateFeedWhenBookInfoTransferred(event);
+        if (event.getUserEmail() == null) {
+            logger.error("Missing userEmail in event: {}", event);
+            return;
+        }
+
+        subscriberRepository.findByEmail(event.getUserEmail()).ifPresent(subscriber -> {
+            // 도서 ID와 제목으로 피드 업데이트
+            subscriber.updateBookFeed(event.getBookId(), event.getTitle());
+            subscriberRepository.save(subscriber);
+            logger.info("Updated feed for: {}", event.getUserEmail());
+        });
     }
 
     @StreamListener(
@@ -46,15 +56,24 @@ public class PolicyHandler {
         condition = "headers['type']=='BookInfoSended'"
     )
     public void wheneverBookInfoSended_BookInfoSave(
-        @Payload BookInfoSended bookInfoSended
+        @Payload BookInfoSended event
     ) {
-        BookInfoSended event = bookInfoSended;
-        System.out.println(
-            "\n\n##### listener BookInfoSave : " + bookInfoSended + "\n\n"
-        );
+        logger.info("##### listener: BookInfoSended {}", event);
 
-        // Sample Logic //
-        Subscriber.bookInfoSave(event);
+        if (event.getRecipientEmails() == null || event.getBookId() == null) {
+            logger.error("Invalid event data: {}", event);
+            return;
+        }
+
+        event.getRecipientEmails().forEach(email -> {
+            subscriberRepository.findByEmail(email).ifPresent(subscriber -> {
+                subscriber.addRecommendedBook(event.getBookId());
+                subscriberRepository.save(subscriber);
+                logger.info("Added recommendation for: {}", email);
+            });
+        });
     }
+
 }
+
 //>>> Clean Arch / Inbound Adaptor

@@ -18,4 +18,22 @@ public class Login extends AbstractEvent {
     private Boolean ktCustomer;
     private String loginStatus;
 
+    public Login(Admin aggregate) {
+        super(aggregate);
+        this.id = aggregate.getId();
+    }
+
+    public Login() {
+        super();
+    }
+
+    public Long getUserId() {
+        return this.id;
+    }
+
+    public String getMessage(String msg) {
+        message = msg;
+        return message;
+    }
+
 }

@@ -1,12 +1,9 @@
 package bookmanagementcna.domain;
 
-import bookmanagementcna.domain.*;
 import bookmanagementcna.infra.AbstractEvent;
-import java.time.LocalDate;
 import java.util.*;
 import lombok.*;
 
-//<<< DDD / Domain Event // 출간됨, 전자책 요약됨
 @Data
 @ToString
 public class BookPublicated extends AbstractEvent {
@@ -22,7 +19,7 @@ public class BookPublicated extends AbstractEvent {
     private String coverImageUrl;
     private String message;
 
-    public BookPublicated(Service aggregate) {
+    public BookPublicated(EBookService aggregate) {
         super(aggregate);
     }
 
@@ -30,5 +27,3 @@ public class BookPublicated extends AbstractEvent {
         super();
     }
 }
-
-

@@ -1,11 +1,13 @@
 package bookmanagementcna.infra;
 
 import bookmanagementcna.config.kafka.KafkaProcessor;
-import bookmanagementcna.domain.*;
+import bookmanagementcna.domain.EBookService;
+import bookmanagementcna.domain.PointsUsed;
+import bookmanagementcna.domain.ReportResolved;
+import bookmanagementcna.domain.RequestApproved;
+import bookmanagementcna.domain.ServiceRepository;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import javax.naming.NameParser;
-import javax.naming.NameParser;
 import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.stream.annotation.StreamListener;
@@ -18,7 +20,7 @@ import org.springframework.stereotype.Service;
 public class PolicyHandler {
 
     @Autowired
-    ServiceRepository serviceRepository;
+    private EBookService eBookService;  // Service -> eBookService 로 수정
 
     @StreamListener(KafkaProcessor.INPUT)
     public void whatever(@Payload String eventString) {}
@@ -30,15 +32,9 @@ public class PolicyHandler {
     public void wheneverRequestApproved_CreateAiCoverImage(
         @Payload RequestApproved requestApproved
     ) {
-        RequestApproved event = requestApproved;
-        System.out.println(
-            "\n\n##### listener CreateAiCoverImage : " +
-            requestApproved +
-            "\n\n"
-        );
+        System.out.println("\n\n##### listener CreateAiCoverImage : " + requestApproved + "\n\n");
 
-        // Sample Logic //
-        Service.createAiCoverImage(event);
+        eBookService.createAiCoverImage(requestApproved);
     }
 
     @StreamListener(
@@ -46,45 +42,30 @@ public class PolicyHandler {
         condition = "headers['type']=='PointsUsed'"
     )
     public void wheneverPointsUsed_BookRequest(@Payload PointsUsed pointsUsed) {
-        PointsUsed event = pointsUsed;
-        System.out.println(
-            "\n\n##### listener BookRequest : " + pointsUsed + "\n\n"
-        );
+        System.out.println("\n\n##### listener BookRequest : " + pointsUsed + "\n\n");
 
-        // Sample Logic //
-        Service.bookRequest(event);
+        eBookService.bookRequest(pointsUsed);
     }
 
     @StreamListener(
         value = KafkaProcessor.INPUT,
         condition = "headers['type']=='PointsUsed'"
     )
-    public void wheneverPointsUsed_ViewIncrease(
-        @Payload PointsUsed pointsUsed
-    ) {
-        PointsUsed event = pointsUsed;
-        System.out.println(
-            "\n\n##### listener ViewIncrease : " + pointsUsed + "\n\n"
-        );
+    public void wheneverPointsUsed_ViewIncrease(@Payload PointsUsed pointsUsed) {
+        System.out.println("\n\n##### listener ViewIncrease : " + pointsUsed + "\n\n");
 
-        // Sample Logic //
-        Service.viewIncrease(event);
+        eBookService.viewIncrease(pointsUsed);
     }
 
     @StreamListener(
         value = KafkaProcessor.INPUT,
         condition = "headers['type']=='ReportResolved'"
     )
-    public void wheneverReportResolved_DeactivateContent(
-        @Payload ReportResolved reportResolved
-    ) {
-        ReportResolved event = reportResolved;
-        System.out.println(
-            "\n\n##### listener DeactivateContent : " + reportResolved + "\n\n"
-        );
+    public void wheneverReportResolved_DeactivateContent(@Payload ReportResolved reportResolved) {
+        System.out.println("\n\n##### listener DeactivateContent : " + reportResolved + "\n\n");
 
-        // Sample Logic //
-        Service.deactivateContent(event);
+        eBookService.deactivateContent(reportResolved);
     }
 }
+
 //>>> Clean Arch / Inbound Adaptor

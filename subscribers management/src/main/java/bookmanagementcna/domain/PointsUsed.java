@@ -16,6 +16,9 @@ public class PointsUsed extends AbstractEvent {
     private String name;
     private Integer point;
     private Boolean joinStatus;
+    private Boolean ktCustomer;
+    private String address;
+    private String password; 
 
     public PointsUsed(Subscriber aggregate) {
         super(aggregate);
