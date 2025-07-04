@@ -44,34 +44,48 @@ public class PublishManage {
  
     @PostPersist
     public void onPostPersist() {
-        if ("REQUESTED".equals(this.publishStatus)) {
-            PublishRequestRegistered event = new PublishRequestRegistered(this);
-            event.publishAfterCommit();
-        }
- 
-        if (Boolean.TRUE.equals(this.finalSave)) {
-            SaveCompleted event = new SaveCompleted(this);
-            event.publishAfterCommit();
-        }
+
+        SaveCompleted saveCompleted = new SaveCompleted(this);
+        saveCompleted.publishAfterCommit();
+
+        RequestApproved requestApproved = new RequestApproved(this);
+        requestApproved.publishAfterCommit();
+
+        PublishRequestRegistered publishRequestRegistered = new PublishRequestRegistered(this);
+        publishRequestRegistered.publishAfterCommit();
     }
- 
+
+     // ✅ 추가된 부분
+    public void requestPublication() {
+        this.publishStatus = "REQUESTED";  // 또는 "요청"
+    }
+
+    public void approve() {
+        this.publishStatus = "APPROVED";   // 또는 "승인됨"
+    }
+
     public static PublishManageRepository repository() {
-        return AuthorManagementApplication.applicationContext.getBean(PublishManageRepository.class);
+        PublishManageRepository publishManageRepository =
+            AuthorManagementApplication.applicationContext.getBean(PublishManageRepository.class);
+        return publishManageRepository;
+
     }
  
     //<<< Clean Arch / Port Method
     public static void approvePublish(BookApproved bookApproved) {
         try {
             Long id = Long.valueOf(bookApproved.getTargetId());
- 
+
+
             repository().findById(id).ifPresent(publishManage -> {
-                publishManage.approve(); // 상태 변경: "APPROVED"
-                repository().save(publishManage);
- 
-                RequestApproved event = new RequestApproved(publishManage);
-                event.publishAfterCommit();
+                publishManage.setPublishStatus("승인됨"); // 상태 변경
+                repository().save(publishManage); // 저장
+
+                RequestApproved requestApproved = new RequestApproved(publishManage);
+                requestApproved.publishAfterCommit();
             });
- 
+
+
         } catch (NumberFormatException e) {
             System.out.println("Invalid targetId in BookApproved: " + bookApproved.getTargetId());
         }
@@ -80,3 +94,5 @@ public class PublishManage {
  
 }
 //>>> DDD / Aggregate Root
+
+

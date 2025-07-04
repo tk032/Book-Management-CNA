@@ -39,13 +39,22 @@
 			<artifactId>h2</artifactId>
 			<scope>runtime</scope>
 		</dependency>
-      <!-- lombok -->
+
+		<!-- lombok -->
 		<dependency>
-				<groupId>org.projectlombok</groupId>
-				<artifactId>lombok</artifactId>
-				<version>1.18.30</version>
-				<scope>provided</scope>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<version>1.18.30</version>
+			<scope>provided</scope>
 		</dependency>
+
+		<!-- ✅ JSON 라이브러리 추가 (AI 커버 이미지 생성용) -->
+		<dependency>
+			<groupId>org.json</groupId>
+			<artifactId>json</artifactId>
+			<version>20230227</version>
+		</dependency>
+
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-starter-openfeign</artifactId>
@@ -119,5 +128,4 @@
 			</plugin>
 		</plugins>
 	</build>
-
 </project>
