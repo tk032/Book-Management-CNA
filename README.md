@@ -1,96 +1,75 @@
-# 
+# Book Management CNA
 
-## Model
-www.msaez.io/#/44573776/storming/b2bc2e56a5f05b28039621bec06e4d8b
+MSA(마이크로서비스 아키텍처) 기반의 도서 출판 관리 플랫폼입니다.
+작가 등록부터 출판 심사, 구독자 관리, DALL-E 3 기반 도서 표지 자동 생성까지 전체 출판 워크플로우를 지원합니다.
 
-## Before Running Services
-### Make sure there is a Kafka server running
+---
+
+## 시스템 아키텍처
+
 ```
-cd kafka
+[Frontend: React.js]
+        │
+        ▼
+[API Gateway: Spring Cloud Gateway :8088]
+        │
+   ┌────┼────┬────────┐
+   ▼    ▼    ▼        ▼
+Author  Sub  Service  Admin
+  └──────────────────────┘
+           │ Kafka (Event-driven)
+           ▼
+       Dashboard
+```
+
+---
+
+## 주요 기능
+
+- **작가 관리** : 작가 등록, 출판 신청 및 상태 관리
+- **구독자 관리** : 구독자 가입, 포인트, 도서 구독
+- **출판 서비스** : 도서 등록, 베스트셀러 관리
+- **관리자** : 출판 승인/반려 처리
+- **대시보드** : 이벤트 기반 실시간 현황 집계
+- **AI 표지 생성** : DALL-E 3 API를 활용한 도서 표지 자동 생성
+
+---
+
+## 기술 스택
+
+![React](https://img.shields.io/badge/React-61DAFB?style=for-the-badge&logo=react&logoColor=black)
+![Java](https://img.shields.io/badge/Java-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white)
+![Spring Boot](https://img.shields.io/badge/Spring_Boot-6DB33F?style=for-the-badge&logo=springboot&logoColor=white)
+![Kafka](https://img.shields.io/badge/Apache_Kafka-231F20?style=for-the-badge&logo=apachekafka&logoColor=white)
+![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)
+![Kubernetes](https://img.shields.io/badge/Kubernetes-326CE5?style=for-the-badge&logo=kubernetes&logoColor=white)
+![AWS](https://img.shields.io/badge/AWS_EKS-232F3E?style=for-the-badge&logo=amazonaws&logoColor=white)
+
+---
+
+## 실행 방법
+
+**1. Kafka 실행**
+```bash
+cd infra
 docker-compose up
 ```
-- Check the Kafka messages:
-```
-cd infra
-docker-compose exec -it kafka /bin/bash
-cd /bin
-./kafka-console-consumer --bootstrap-server localhost:9092 --topic
-```
 
-## Run the backend micro-services
-See the README.md files inside the each microservices directory:
+**2. 백엔드 마이크로서비스 실행**
 
-- author management
-- subscribers management
-- service
-- admin
-- 대시보드
+각 서비스 디렉토리(`author management`, `subscribers management`, `service`, `admin`) 내부 README 참고
 
-
-## Run API Gateway (Spring Gateway)
-```
+**3. API Gateway 실행**
+```bash
 cd gateway
 mvn spring-boot:run
 ```
 
-## Test by API
-- author management
-```
- http :8088/authors id="id"email="email"name="name"introduce="introduce"major="major"portfolio="portfolio"registerStatus="registerStatus"
- http :8088/publishManages id="id"authorName="authorName"authorId="authorId"bookTitle="bookTitle"bookContent="bookContent"finalSave="finalSave"publishStatus="publishStatus"
-```
-- subscribers management
-```
- http :8088/subscribers id="id"email="email"name="name"message="message"point="point"joinStatus="joinStatus"ktCustomer="ktCustomer"loginStatus="loginStatus"
-```
-- service
-```
- http :8088/services id="id"publicationId="publicationId"authorName="authorName"authorId="authorId"title="title"summaryText="summaryText"coverImageUrl="coverImageUrl"productRegistered="productRegistered"isPublishCompleted="isPublishCompleted"isBestSeller="isBestSeller"status="status"publishedDate="publishedDate"message="message"
-```
-- admin
-```
- http :8088/admins id="id"requestId="requestId"requestType="requestType"targetId="	targetId"requestedAt="requestedAt"status="status"adminId="adminId"approvedAt="approvedAt"message="	message"
-```
-- 대시보드
-```
-```
-
-
-## Run the frontend
-```
+**4. 프론트엔드 실행**
+```bash
 cd frontend
-npm i
+npm install
 npm run serve
 ```
 
-## Test by UI
-Open a browser to localhost:8088
-
-## Required Utilities
-
-- httpie (alternative for curl / POSTMAN) and network utils
-```
-sudo apt-get update
-sudo apt-get install net-tools
-sudo apt install iputils-ping
-pip install httpie
-```
-
-- kubernetes utilities (kubectl)
-```
-curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
-sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
-```
-
-- aws cli (aws)
-```
-curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-unzip awscliv2.zip
-sudo ./aws/install
-```
-
-- eksctl 
-```
-curl --silent --location "https://github.com/weaveworks/eksctl/releases/latest/download/eksctl_$(uname -s)_amd64.tar.gz" | tar xz -C /tmp
-sudo mv /tmp/eksctl /usr/local/bin
-```
+브라우저에서 `localhost:8088` 접속
